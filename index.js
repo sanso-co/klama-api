@@ -10,6 +10,7 @@ import collectionGroupRoutes from "./routes/collectionGroup.js";
 import keywordRoutes from "./routes/keyword.js";
 import rateRoutes from "./routes/rate.js";
 import showRoutes from "./routes/show.js";
+import periodicCollection from "./routes/periodicCollection.js";
 
 const app = express();
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/collection-group", collectionGroupRoutes);
 app.use("/keywords", keywordRoutes);
 app.use("/rate", rateRoutes);
 app.use("/shows", showRoutes);
+app.use("/periodic-collection", periodicCollection);
 
 //db
 const dbOptions = {};

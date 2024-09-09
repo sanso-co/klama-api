@@ -13,28 +13,28 @@ import Keyword from "../models/keyword.js";
 // };
 
 export const createKeyword = async (req, res) => {
-  const keyword = req.body;
+    const keyword = req.body;
 
-  try {
-    const existingKeyword = await Keyword.findOne({ id: keyword.id });
+    try {
+        const existingKeyword = await Keyword.findOne({ id: keyword.id });
 
-    if (existingKeyword) {
-      return res.status(400).json("Keyword already exists");
-    }
+        if (existingKeyword) {
+            return res.status(400).json("Keyword already exists");
+        }
 
-    const newKeyword = await Keyword.create(keyword);
+        const newKeyword = await Keyword.create(keyword);
 
-    res.status(200).json(newKeyword);
-  } catch (error) {}
+        res.status(200).json(newKeyword);
+    } catch (error) {}
 };
 
 // get all keywords
 export const getAllKeywords = async (req, res) => {
-  try {
-    let keywords = Keyword.find();
-    const result = await keywords;
-    res.status(200).json({ results: result });
-  } catch (error) {
-    res.status(500).json(error);
-  }
+    try {
+        let keywords = Keyword.find();
+        const result = await keywords;
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 };

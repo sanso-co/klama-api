@@ -28,45 +28,35 @@ export const getPermanentCollectoinDetails = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        const options = {
-            page: parseInt(page, 10),
+        const collection = await permanentCollection.findById(_id);
+
+        if (!collection) {
+            return res.status(404).json({ message: "Collection not found" });
+        }
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        const paginatedShows = collection.shows.slice(startIndex, endIndex);
+
+        const result = {
+            result: paginatedShows,
+            totalDocs: collection.shows.length,
             limit: parseInt(limit, 10),
-            select: "name description shows",
-            pagination: true,
+            totalPages: Math.ceil(collection.shows.length / limit),
+            page: parseInt(page, 10),
+            pagingCounter: startIndex + 1,
+            hasPrevPage: page > 1,
+            hasNextPage: endIndex < collection.shows.length,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: endIndex < collection.shows.length ? page + 1 : null,
         };
 
-        const result = await permanentCollection.paginate({ _id }, options);
-
-        if (!result.docs.length) {
-            return res.status(404).json({ message: "Permanent collection not found" });
-        }
-
-        const collection = result.docs[0];
-
-        const paginatedCollection = await permanentCollection
-            .findOne({ _id })
-            .select("name description")
-            .slice("shows", [(page - 1) * limit, parseInt(limit)])
-            .lean();
-
-        if (!paginatedCollection) {
-            return res.status(404).json({ message: "Permanent collection not found" });
-        }
-
-        const response = {
-            _id: paginatedCollection._id,
-            name: paginatedCollection.name,
-            description: paginatedCollection.description,
-            shows: {
-                result: paginatedCollection.shows,
-                totalShows: collection.shows.length,
-                currentPage: parseInt(page),
-                totalPages: Math.ceil(collection.shows.length / limit),
-                limit: parseInt(limit),
-            },
-        };
-
-        res.status(200).json(response);
+        res.status(200).json({
+            name: collection.name,
+            description: collection.description,
+            shows: result,
+        });
     } catch (error) {
         res.status(500).json({ message: "Permanent collection doesn't exist" });
     }

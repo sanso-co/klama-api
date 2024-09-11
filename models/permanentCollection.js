@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
 
 const showSchema = new mongoose.Schema(
     {
@@ -27,7 +26,5 @@ const permanentCollection = mongoose.Schema(
     },
     { timestamps: true }
 );
-
-permanentCollection.plugin(mongoosePaginate);
 
 export default mongoose.model("PermanentCollection", permanentCollection);

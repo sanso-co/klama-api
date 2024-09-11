@@ -11,6 +11,7 @@ import keywordRoutes from "./routes/keyword.js";
 import rateRoutes from "./routes/rate.js";
 import showRoutes from "./routes/show.js";
 import periodicCollection from "./routes/periodicCollection.js";
+import permanentCollection from "./routes/permanentCollection.js";
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/keywords", keywordRoutes);
 app.use("/rate", rateRoutes);
 app.use("/shows", showRoutes);
 app.use("/periodic-collection", periodicCollection);
+app.use("/permanent-collection", permanentCollection);
 
 //db
 const dbOptions = {};
@@ -35,6 +37,6 @@ const dbOptions = {};
 const PORT = process.env.PORT || 3500;
 
 mongoose
-  .connect(process.env.MONGODB_ADDRESS, dbOptions)
-  .then(() => app.listen(PORT, () => console.log(`Server running on ${PORT}`)))
-  .catch((error) => console.log(error.message));
+    .connect(process.env.MONGODB_ADDRESS, dbOptions)
+    .then(() => app.listen(PORT, () => console.log(`Server running on ${PORT}`)))
+    .catch((error) => console.log(error.message));

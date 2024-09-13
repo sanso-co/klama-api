@@ -4,6 +4,7 @@ import {
     getAllPermanentCollections,
     getPermanentCollectoinDetails,
     addShowToPermanentCollection,
+    removeShowFromPermanentCollection,
 } from "../controllers/permanentCollection.js";
 
 const router = express.Router();
@@ -23,9 +24,14 @@ router.get("/", getAllPermanentCollections);
 // @access Private
 router.get("/:id", getPermanentCollectoinDetails);
 
-// @route patch /permanent-collection/:id
+// @route patch /permanent-collection/add/:id
 // @desc Add a new collection to the group
 // @access Private
-router.patch("/:id", addShowToPermanentCollection);
+router.patch("/add/:id", addShowToPermanentCollection);
+
+// @route patch /permanent-collection/remove/:id
+// @desc Add a show to collection
+// @access Private
+router.patch("/remove/:id", removeShowFromPermanentCollection);
 
 export default router;

@@ -68,15 +68,54 @@ export const addShowToPermanentCollection = async (req, res) => {
     const { show } = req.body;
 
     try {
+        const collection = await permanentCollection.findById(id);
+
+        if (!collection) {
+            return res.status(404).json({ message: "Permanent collection not found" });
+        }
+
+        const showExists = collection.shows.some(
+            (existingShow) => existingShow.id === show.id.toString()
+        );
+
+        if (showExists) {
+            return res.status(400).json({ message: "Show already exists in the collection" });
+        }
+
         const updatedCollection = await permanentCollection.findByIdAndUpdate(
             id,
             { $push: { shows: show } },
             { new: true, runValidators: true }
         );
 
-        if (!updatedCollection) {
+        res.status(200).json(updatedCollection);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const removeShowFromPermanentCollection = async (req, res) => {
+    const { id } = req.params;
+    const { showId } = req.body;
+
+    try {
+        const collection = await permanentCollection.findById(id);
+
+        if (!collection) {
             return res.status(404).json({ message: "Permanent collection not found" });
         }
+
+        const showExists = collection.shows.some((existingShow) => existingShow.id === showId);
+
+        if (!showExists) {
+            return res.status(400).json({ message: "Show not found in the collection" });
+        }
+
+        const updatedCollection = await permanentCollection.findByIdAndUpdate(
+            id,
+            { $pull: { shows: { id: showId } } },
+            { new: true, runValidators: true }
+        );
 
         res.status(200).json(updatedCollection);
     } catch (error) {

@@ -12,6 +12,7 @@ import rateRoutes from "./routes/rate.js";
 import showRoutes from "./routes/show.js";
 import periodicCollection from "./routes/periodicCollection.js";
 import permanentCollection from "./routes/permanentCollection.js";
+import providerCollection from "./routes/providerCollection.js";
 
 const app = express();
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/rate", rateRoutes);
 app.use("/shows", showRoutes);
 app.use("/periodic-collection", periodicCollection);
 app.use("/permanent-collection", permanentCollection);
+app.use("/provider-collection", providerCollection);
 
 //db
 const dbOptions = {};

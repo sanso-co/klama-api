@@ -48,9 +48,9 @@ export const addListToPeriodicCollection = async (req, res) => {
         if (!existingCollection) {
             return res.status(404).json({ message: "Periodic collection not found" });
         }
-
         existingCollection.lists.push(list);
         const updatedCollection = await existingCollection.save();
+
         res.status(200).json(updatedCollection);
     } catch (error) {
         res.status(500).json({ message: error.message });

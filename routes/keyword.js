@@ -1,5 +1,5 @@
 import express from "express";
-import { createKeyword, getAllKeywords } from "../controllers/keyword.js";
+import { createKeyword, getAllKeywords, updateKeyword } from "../controllers/keyword.js";
 
 const router = express.Router();
 
@@ -12,5 +12,10 @@ router.post("/", createKeyword);
 // @desc Get all keywords
 // @access Private
 router.get("/", getAllKeywords);
+
+// @route PATCH /keywords
+// @desc Update a keyword
+// @access Private
+router.patch("/:id", updateKeyword);
 
 export default router;

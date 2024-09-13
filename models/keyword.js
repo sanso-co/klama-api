@@ -12,6 +12,7 @@ const keywordSchema = mongoose.Schema(
         },
         rank: {
             type: Number,
+            default: 999,
         },
     },
     { timestamps: true }

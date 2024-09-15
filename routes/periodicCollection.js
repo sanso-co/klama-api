@@ -3,6 +3,7 @@ import {
     createPeriodicCollection,
     getAllPeriodicCollections,
     getPeriodicCollectoinDetails,
+    getPeriodicDetailsLatest,
     addListToPeriodicCollection,
 } from "../controllers/periodicCollection.js";
 
@@ -21,7 +22,12 @@ router.get("/", getAllPeriodicCollections);
 // @route GET /periodic-collection/:id
 // @desc Get periodic collection details
 // @access Private
-router.get("/:id", getPeriodicCollectoinDetails);
+router.get("/:id/all", getPeriodicCollectoinDetails);
+
+// @route GET /periodic-collection/:id
+// @desc Get periodic collection details
+// @access Private
+router.get("/:id/latest", getPeriodicDetailsLatest);
 
 // @route patch /periodic-collection/:id
 // @desc Add a new collection to the group

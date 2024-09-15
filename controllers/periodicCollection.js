@@ -37,6 +37,34 @@ export const getPeriodicCollectoinDetails = async (req, res) => {
     }
 };
 
+// get periodic collection details with the latest list only
+export const getPeriodicDetailsLatest = async (req, res) => {
+    const { id: _id } = req.params;
+    try {
+        const result = await periodicCollection.findById(_id);
+
+        if (!result) {
+            return res.status(404).json({ message: "Periodic collection not found" });
+        }
+
+        const latestList = result.lists[result.lists.length - 1];
+
+        const response = {
+            name: result.name,
+            description: result.description,
+            frequency: result.frequency,
+            list: {
+                releaseDate: latestList.releaseDate,
+                shows: latestList.shows,
+            },
+        };
+
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: "Periodic collection doesn't exist" });
+    }
+};
+
 // add a list to a periodic collection
 export const addListToPeriodicCollection = async (req, res) => {
     const { id } = req.params;

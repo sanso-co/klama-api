@@ -13,6 +13,7 @@ import showRoutes from "./routes/show.js";
 import periodicCollection from "./routes/periodicCollection.js";
 import permanentCollection from "./routes/permanentCollection.js";
 import providerCollection from "./routes/providerCollection.js";
+import recommendations from "./routes/recommendations.js";
 
 const app = express();
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/shows", showRoutes);
 app.use("/periodic-collection", periodicCollection);
 app.use("/permanent-collection", permanentCollection);
 app.use("/provider-collection", providerCollection);
+app.use("/recommendations", recommendations);
 
 //db
 const dbOptions = {};

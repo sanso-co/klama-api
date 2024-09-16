@@ -29,7 +29,7 @@ app.use("/collections", collectionRoutes);
 app.use("/collection-group", collectionGroupRoutes);
 app.use("/keywords", keywordRoutes);
 app.use("/rate", rateRoutes);
-app.use("/shows", showRoutes);
+app.use("/show", showRoutes);
 app.use("/periodic-collection", periodicCollection);
 app.use("/permanent-collection", permanentCollection);
 app.use("/provider-collection", providerCollection);

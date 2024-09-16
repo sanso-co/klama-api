@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const showSchema = new mongoose.Schema(
     {
-        id: { type: String, required: true },
+        id: { type: Number, required: true },
         name: { type: String, required: true },
         original_name: String,
         first_air_date: Date,

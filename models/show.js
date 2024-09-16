@@ -1,21 +1,24 @@
 import mongoose from "mongoose";
 
 const showSchema = mongoose.Schema(
-  {
-    id: {
-      type: Number,
+    {
+        id: {
+            type: Number,
+            required: true,
+        },
+        name: {
+            type: String,
+            required: true,
+        },
+        original_name: {
+            type: String,
+            required: true,
+        },
+        poster_path: {
+            type: String,
+        },
     },
-    name: {
-      type: String,
-    },
-    poster_path: {
-      type: String,
-    },
-    youtube_keywords: {
-      type: [String],
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 export default mongoose.model("Show", showSchema);

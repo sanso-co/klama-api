@@ -1,28 +1,21 @@
 import mongoose from "mongoose";
 
-const showSchema = new mongoose.Schema(
-    {
-        id: { type: String, required: true },
-        name: { type: String, required: true },
-        original_name: String,
-        first_air_date: Date,
-        poster_path: String,
-        genre_ids: [String],
-    },
-    { _id: false }
-);
-
 const providerCollection = mongoose.Schema(
     {
+        id: {
+            type: Number,
+            required: true,
+        },
         name: {
             type: String,
             required: true,
-            unique: true,
         },
-        description: {
-            type: String,
-        },
-        shows: [showSchema],
+        shows: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Show",
+            },
+        ],
     },
     { timestamps: true }
 );

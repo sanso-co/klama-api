@@ -1,99 +1,92 @@
-import Recommendations from "../models/recommendations.js";
 import axios from "axios";
+import Recommendations from "../models/recommendations.js";
+import Show from "../models/show.js";
 
-// create a new show specific for recommendations
-export const createShow = async (req, res) => {
-    const show = req.body;
-    const newShow = new Recommendations(show);
+// create or add show to recommendations
+export const addShowToRecommendations = async (req, res) => {
+    const { showId } = req.params;
+    const { recoShowId } = req.body;
+
     try {
-        const result = await newShow.save();
-        res.status(201).json(result);
+        const thisShow = await Show.findOne({ id: showId });
+        const recoShow = await Show.findOne({ id: recoShowId });
+
+        if (!thisShow || !recoShow) {
+            return res.status(404).json({ message: "One or both shows not found" });
+        }
+
+        let recommendation = await Recommendations.findOne({ id: showId });
+
+        if (!recommendation) {
+            recommendation = await Recommendations.create({
+                id: showId,
+                details: thisShow._id,
+            });
+        }
+
+        let recoRecommendation = await Recommendations.findOne({ id: recoShowId });
+        if (!recoRecommendation) {
+            recoRecommendation = await Recommendations.create({
+                id: recoShowId,
+                details: recoShow._id,
+            });
+        }
+
+        const recoExists = recommendation.shows.includes(recoShow._id);
+        if (!recoExists) {
+            recommendation.shows.push(recoShow._id);
+            await recommendation.save();
+        }
+
+        const mainShowExists = recoRecommendation.shows.includes(thisShow._id);
+        if (!mainShowExists) {
+            recoRecommendation.shows.push(thisShow._id);
+            await recoRecommendation.save();
+        }
+
+        if (!recoExists || !mainShowExists) {
+            return res.status(200).json({
+                message: "Recommendations updated successfully",
+                mainShow: recommendation,
+                recommendedShow: recoRecommendation,
+            });
+        } else {
+            return res
+                .status(400)
+                .json({ message: "Shows already exist in each other's recommendations" });
+        }
     } catch (error) {
-        res.status(409).json({ message: error.message });
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// get permanent collection details
+export const getRecommendationDetails = async (req, res) => {
+    const { showId } = req.params;
+
+    try {
+        const recommendation = await Recommendations.findOne({ id: showId }).populate({
+            path: "shows",
+            select: "id name original_name poster_path first_air_date popularity_score",
+        });
+
+        if (!recommendation) {
+            return res.status(404).json({ message: "recommendations not found" });
+        }
+
+        res.status(200).json(recommendation);
+    } catch (error) {
+        res.status(500).json({ message: "Recommendations doesn't exist" });
     }
 };
 
 // get all shows for recommendations
 export const getAllShows = async (req, res) => {
     try {
-        const result = await Recommendations.find();
+        const result = await Recommendations.find().sort({ "details.original_name": 1 });
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json(error);
-    }
-};
-
-// get permanent collection details
-export const getRecommendationDetails = async (req, res) => {
-    const { id: _id } = req.params;
-    const { page = 1 } = req.query;
-
-    const limit = 10;
-
-    try {
-        const recommendations = await Recommendations.findById(_id);
-        if (!recommendations) {
-            return res.status(404).json({ message: "recommendations not found" });
-        }
-
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-        const paginatedShows = recommendations.results.slice(startIndex, endIndex);
-
-        const result = {
-            shows: paginatedShows,
-            totalDocs: recommendations.results.length,
-            limit: parseInt(limit, 10),
-            totalPages: Math.ceil(recommendations.results.length / limit),
-            page: parseInt(page, 10),
-            pagingCounter: startIndex + 1,
-            hasPrevPage: page > 1,
-            hasNextPage: endIndex < recommendations.results.length,
-            prevPage: page > 1 ? page - 1 : null,
-            nextPage: endIndex < recommendations.results.length ? page + 1 : null,
-        };
-
-        const response = {
-            id: recommendations.id,
-            details: recommendations.details,
-            results: result,
-        };
-
-        res.status(200).json(response);
-    } catch (error) {
-        res.status(500).json({ message: "Recommendations doesn't exist" });
-    }
-};
-
-// add a show to a permanent collection
-export const addShowToRecommendations = async (req, res) => {
-    const { id } = req.params;
-    const { recommended } = req.body;
-
-    try {
-        const show = await Recommendations.findById(id);
-
-        if (!show) {
-            return res.status(404).json({ message: "Show not found" });
-        }
-
-        const showExists = show.results.some(
-            (existingShow) => existingShow.id === show.id.toString()
-        );
-
-        if (showExists) {
-            return res.status(400).json({ message: "Show already exists in the recommendations" });
-        }
-
-        const updatedShow = await Recommendations.findByIdAndUpdate(
-            id,
-            { $push: { results: recommended } },
-            { new: true, runValidators: true }
-        );
-
-        res.status(200).json(updatedShow);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
     }
 };
 

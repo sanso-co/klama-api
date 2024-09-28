@@ -1,5 +1,13 @@
 import express from "express";
-import { createKeyword, getAllKeywords, updateKeyword } from "../controllers/keyword.js";
+import {
+    createKeyword,
+    getAllKeywords,
+    getKeywordsForShow,
+    updateKeyword,
+    searchKeyword,
+    addShowToKeyword,
+    getKeywordDetails,
+} from "../controllers/keyword.js";
 
 const router = express.Router();
 
@@ -13,9 +21,29 @@ router.post("/", createKeyword);
 // @access Private
 router.get("/", getAllKeywords);
 
-// @route PATCH /keywords
+// @route GET /keywords/show/:id
+// @desc Get keywords that belong to a show
+// @access Private
+router.get("/show/:showId", getKeywordsForShow);
+
+// @route GET /keywords/show/:id
+// @desc Get keywords that belong to a show
+// @access Private
+router.get("/detail/:keywordId", getKeywordDetails);
+
+// @route GET /keywords/search
+// @desc Search keyword
+// @access Private
+router.get("/search", searchKeyword);
+
+// @route PATCH /keywords/modify/:id
 // @desc Update a keyword
 // @access Private
-router.patch("/:id", updateKeyword);
+router.patch("/modify/:id", updateKeyword);
+
+// @route patch /keywords/add/:id
+// @desc Add a new show to keyword
+// @access Private
+router.patch("/add/:id", addShowToKeyword);
 
 export default router;

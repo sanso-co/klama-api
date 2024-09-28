@@ -1,17 +1,5 @@
 import mongoose from "mongoose";
 
-const showSchema = new mongoose.Schema(
-    {
-        id: { type: String, required: true },
-        name: { type: String, required: true },
-        original_name: String,
-        first_air_date: Date,
-        poster_path: String,
-        genre_ids: [String],
-    },
-    { _id: false }
-);
-
 const periodicCollection = mongoose.Schema(
     {
         name: {
@@ -33,7 +21,12 @@ const periodicCollection = mongoose.Schema(
                     type: Date,
                     required: true,
                 },
-                shows: [showSchema],
+                shows: [
+                    {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Show",
+                    },
+                ],
             },
         ],
     },

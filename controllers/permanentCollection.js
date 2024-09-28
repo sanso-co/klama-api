@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import permanentCollection from "../models/permanentCollection.js";
 
 // create a new permanent collection: eg. most loved, highly recommended
@@ -28,7 +29,10 @@ export const getPermanentCollectoinDetails = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        const collection = await permanentCollection.findById(_id);
+        const collection = await permanentCollection.findById(_id).populate({
+            path: "shows",
+            select: "id name original_name poster_path first_air_date popularity_score",
+        });
 
         if (!collection) {
             return res.status(404).json({ message: "Collection not found" });
@@ -65,7 +69,7 @@ export const getPermanentCollectoinDetails = async (req, res) => {
 // add a show to a permanent collection
 export const addShowToPermanentCollection = async (req, res) => {
     const { id } = req.params;
-    const { show } = req.body;
+    const { showObjId } = req.body;
 
     try {
         const collection = await permanentCollection.findById(id);
@@ -74,17 +78,19 @@ export const addShowToPermanentCollection = async (req, res) => {
             return res.status(404).json({ message: "Permanent collection not found" });
         }
 
-        const showExists = collection.shows.some(
-            (existingShow) => existingShow.id === show.id.toString()
-        );
+        const showExists = collection.shows.includes(showObjId);
 
         if (showExists) {
             return res.status(400).json({ message: "Show already exists in the collection" });
         }
 
+        if (!mongoose.Types.ObjectId.isValid(showObjId)) {
+            return res.status(400).json({ message: "Invalid show ID" });
+        }
+
         const updatedCollection = await permanentCollection.findByIdAndUpdate(
             id,
-            { $push: { shows: show } },
+            { $push: { shows: showObjId } },
             { new: true, runValidators: true }
         );
 

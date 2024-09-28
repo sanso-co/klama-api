@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import periodicCollection from "../models/periodicCollection.js";
 
 // create a new periodic collection: eg. trending now or new releases
@@ -41,7 +42,10 @@ export const getPeriodicCollectoinDetails = async (req, res) => {
 export const getPeriodicDetailsLatest = async (req, res) => {
     const { id: _id } = req.params;
     try {
-        const result = await periodicCollection.findById(_id);
+        const result = await periodicCollection.findById(_id).populate({
+            path: "lists.shows",
+            select: "id name original_name poster_path first_air_date popularity_score",
+        });
 
         if (!result) {
             return res.status(404).json({ message: "Periodic collection not found" });
@@ -68,17 +72,22 @@ export const getPeriodicDetailsLatest = async (req, res) => {
 // add a list to a periodic collection
 export const addListToPeriodicCollection = async (req, res) => {
     const { id } = req.params;
-    const list = req.body;
+    const { releaseDate, shows } = req.body;
 
     try {
-        const existingCollection = await periodicCollection.findById(id);
+        // Validate that each show ID is a valid ObjectId
+        const showObjectIds = shows.map((show) => new mongoose.Types.ObjectId(show));
 
+        const existingCollection = await periodicCollection.findById(id);
         if (!existingCollection) {
             return res.status(404).json({ message: "Periodic collection not found" });
         }
-        existingCollection.lists.push(list);
+        const newList = {
+            releaseDate,
+            shows: showObjectIds,
+        };
+        existingCollection.lists.push(newList);
         const updatedCollection = await existingCollection.save();
-
         res.status(200).json(updatedCollection);
     } catch (error) {
         res.status(500).json({ message: error.message });

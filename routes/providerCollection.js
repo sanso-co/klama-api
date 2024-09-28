@@ -22,12 +22,12 @@ router.get("/", getAllProviderCollections);
 // @route GET /provider-collection/:id
 // @desc Get provider collection details
 // @access Private
-router.get("/:id", getProviderCollectoinDetails);
+router.get("/:providerId", getProviderCollectoinDetails);
 
 // @route patch /provider-collection/add/:id
 // @desc Add a new collection to the group
 // @access Private
-router.patch("/add/:id", addShowToProviderCollection);
+router.patch("/add/:providerId", addShowToProviderCollection);
 
 // @route patch /provider-collection/remove/:id
 // @desc Add a show to collection

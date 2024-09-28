@@ -1,13 +1,20 @@
 import mongoose from "mongoose";
 
-const permanentCollection = mongoose.Schema(
+const creditSchema = mongoose.Schema(
     {
-        name: {
-            type: String,
+        id: {
+            type: Number,
             required: true,
             unique: true,
         },
-        description: {
+        name: {
+            type: String,
+            required: true,
+        },
+        original_name: {
+            type: String,
+        },
+        job: {
             type: String,
         },
         shows: [
@@ -20,4 +27,4 @@ const permanentCollection = mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model("PermanentCollection", permanentCollection);
+export default mongoose.model("Credit", creditSchema);

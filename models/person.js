@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
-const keywordSchema = mongoose.Schema(
+const personSchema = mongoose.Schema(
     {
         id: {
             type: Number,
             required: true,
+            unique: true,
         },
         name: {
             type: String,
@@ -13,9 +14,11 @@ const keywordSchema = mongoose.Schema(
         original_name: {
             type: String,
         },
-        rank: {
-            type: Number,
-            default: 999,
+        profile_path: {
+            type: String,
+        },
+        known_for_department: {
+            type: String,
         },
         shows: [
             {
@@ -27,6 +30,4 @@ const keywordSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-keywordSchema.index({ "shows.id": 1 });
-
-export default mongoose.model("Keyword", keywordSchema);
+export default mongoose.model("Person", personSchema);

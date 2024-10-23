@@ -14,6 +14,15 @@ const showSchema = mongoose.Schema(
             type: String,
             required: true,
         },
+        season_number: {
+            type: Number,
+        },
+        related_seasons: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Show",
+            },
+        ],
         poster_path: {
             US: {
                 path: {

@@ -107,9 +107,40 @@ export const addShow = async (req, res) => {
     }
 };
 
+export const addNewShow = async (req, res) => {
+    const { show } = req.body;
+
+    try {
+        let showType = await ShowType.findOne({ id: 1 });
+        show.show_type = showType._id;
+
+        if (show.related_seasons) {
+            const seasonIds = await Promise.all(
+                show.related_seasons.map(async (item) => {
+                    let show = await Show.findOne({ id: item });
+
+                    if (show) {
+                        return show._id;
+                    } else {
+                        return null;
+                    }
+                })
+            );
+
+            show.related_seasons = seasonIds.filter(Boolean);
+        }
+
+        const newShow = await Show.create(show);
+
+        res.status(200).json(newShow);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 // get all shows
 export const getAllShow = async (req, res) => {
-    const { page = 1, limit = 40, genre, year } = req.query;
+    const { page = 1, limit = 40, genre, year, sort = "alphabetical" } = req.query;
 
     try {
         const query = {};
@@ -129,9 +160,11 @@ export const getAllShow = async (req, res) => {
             query.first_air_date = { $gte: startOfYear, $lte: endOfYear };
         }
 
+        const sortOption = sort === "newest" ? { first_air_date: -1 } : { original_name: 1 };
+
         const shows = await Show.find(query)
             .select("id name original_name poster_path first_air_date popularity_score")
-            .sort({ original_name: 1 });
+            .sort(sortOption);
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;

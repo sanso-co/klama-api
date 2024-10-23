@@ -19,6 +19,7 @@ import creditRoutes from "./routes/credit.js";
 import showTypeRoutes from "./routes/showType.js";
 import castRoutes from "./routes/cast.js";
 import personRoutes from "./routes/person.js";
+import heroRoute from "./routes/hero.js";
 
 const app = express();
 dotenv.config();
@@ -44,6 +45,7 @@ app.use("/credit", creditRoutes);
 app.use("/type", showTypeRoutes);
 app.use("/cast", castRoutes);
 app.use("/person", personRoutes);
+app.use("/hero", heroRoute);
 
 //db
 const dbOptions = {};

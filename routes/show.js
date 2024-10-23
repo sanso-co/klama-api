@@ -1,6 +1,7 @@
 import express from "express";
 import {
     addShow,
+    addNewShow,
     getAllShow,
     getShowCollection,
     getShowDetails,
@@ -11,9 +12,14 @@ import {
 const router = express.Router();
 
 // @route POST /show
-// @desc Add a new show to the list
+// @desc Add a new show to the list from TMDB
 // @access Private
 router.post("/", addShow);
+
+// @route POST /show
+// @desc Add a new show to the list
+// @access Private
+router.post("/new", addNewShow);
 
 // @route GET /show
 // @desc Get all shows

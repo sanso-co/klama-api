@@ -71,7 +71,9 @@ export const getCreditForShow = async (req, res) => {
             return res.status(404).json({ message: "Drama not found" });
         }
 
-        const credits = await Credit.find({ shows: show._id }).select("id name original_name job");
+        const credits = await Credit.find({ shows: show._id })
+            .select("id name original_name job")
+            .sort({ job: 1 });
 
         const response = {
             id: showId,

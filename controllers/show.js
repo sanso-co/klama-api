@@ -107,6 +107,7 @@ export const addShow = async (req, res) => {
     }
 };
 
+// ADD SHOW MANUALLY
 export const addNewShow = async (req, res) => {
     const { show } = req.body;
 
@@ -248,8 +249,11 @@ export const getShowDetails = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const details = await Show.findOne({ id }).populate("genres");
-
+        const details = await Show.findOne({ id }).populate("genres").populate({
+            path: "related_seasons.show",
+            model: "Show",
+            select: "_id id name original_name season_number",
+        });
         if (!details) {
             return res.status(404).json({ message: "Show not found" });
         }
@@ -288,7 +292,7 @@ export const searchShow = async (req, res) => {
     }
 };
 
-//update show
+// UPDATE SHOW
 export const updateShow = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;

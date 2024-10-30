@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const providerCollection = mongoose.Schema(
+const providerSchema = mongoose.Schema(
     {
         id: {
             type: Number,
@@ -9,6 +9,13 @@ const providerCollection = mongoose.Schema(
         name: {
             type: String,
             required: true,
+        },
+        logo_path: {
+            type: String,
+        },
+        display_priority: {
+            type: Number,
+            default: 999,
         },
         shows: [
             {
@@ -20,4 +27,4 @@ const providerCollection = mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model("ProviderCollection", providerCollection);
+export default mongoose.model("Provider", providerSchema);

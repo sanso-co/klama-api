@@ -13,7 +13,7 @@ const periodicCollection = mongoose.Schema(
         frequency: {
             type: String,
             required: true,
-            enum: ["weekly", "quarterly"],
+            enum: ["weekly", "monthly", "quarterly"],
         },
         lists: [
             {

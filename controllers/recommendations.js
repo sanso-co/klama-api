@@ -169,3 +169,48 @@ export const getRecommendationShows = async (req, res) => {
         res.status(500).json({ message: "An error occurred while fetching recommendations" });
     }
 };
+
+// REORDER RECOMMENDATIONS
+export const reorderRecommendations = async (req, res) => {
+    try {
+        const { showId } = req.params;
+        const { shows } = req.body; // string[]
+
+        // Find the recommendations document
+        const recommendation = await Recommendations.findOne({ id: Number(showId) });
+
+        if (!recommendation) {
+            return res.status(404).json({
+                message: "Recommendations not found for this show",
+            });
+        }
+
+        // Verify that all provided show IDs exist in the current shows array
+        const currentShowIds = recommendation.shows.map((show) => show.toString());
+        const validReorder = shows.every((showId) => currentShowIds.includes(showId));
+
+        if (!validReorder) {
+            return res.status(400).json({
+                message: "Invalid show IDs in reorder array",
+            });
+        }
+
+        // Update the shows array with the new order
+        recommendation.shows = shows;
+        await recommendation.save();
+
+        // Populate the shows details before sending response
+        const updatedRecommendation = await recommendation.populate({
+            path: "shows",
+            select: "id title poster_path first_air_date",
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Recommendations reordered successfully",
+            data: updatedRecommendation,
+        });
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};

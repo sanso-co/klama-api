@@ -16,11 +16,18 @@ const showSchema = mongoose.Schema(
         },
         season_number: {
             type: Number,
+            default: 1,
         },
         related_seasons: [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Show",
+                season: {
+                    type: Number,
+                    required: true,
+                },
+                show: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Show",
+                },
             },
         ],
         poster_path: {

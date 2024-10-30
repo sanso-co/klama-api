@@ -4,6 +4,7 @@ import {
     getRecommendationDetails,
     addShowToRecommendations,
     getRecommendationShows,
+    reorderRecommendations,
 } from "../controllers/recommendations.js";
 
 const router = express.Router();
@@ -27,5 +28,10 @@ router.get("/shows/:id", getRecommendationShows);
 // @desc Add a new collection to the group
 // @access Private
 router.patch("/add/:showId", addShowToRecommendations);
+
+// @route patch /recommendations/add/:id
+// @desc Add a new collection to the group
+// @access Private
+router.patch("/reorder/:showId", reorderRecommendations);
 
 export default router;

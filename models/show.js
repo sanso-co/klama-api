@@ -22,7 +22,7 @@ const showSchema = mongoose.Schema(
             {
                 season: {
                     type: Number,
-                    required: true,
+                    default: 1,
                 },
                 show: {
                     type: mongoose.Schema.Types.ObjectId,
@@ -46,6 +46,18 @@ const showSchema = mongoose.Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Genre",
+            },
+        ],
+        keywords: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Keyword",
+            },
+        ],
+        tones: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Tone",
             },
         ],
         credits: [

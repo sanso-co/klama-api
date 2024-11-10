@@ -17,7 +17,7 @@ export const createKeyword = async (req, res) => {
     } catch (error) {}
 };
 
-// get all keywords
+// GET ALL KEYWORDS
 export const getAllKeywords = async (req, res) => {
     try {
         let keywords = await Keyword.find().sort({
@@ -29,8 +29,9 @@ export const getAllKeywords = async (req, res) => {
     }
 };
 
-// get keyword details
+// GET KEYWORD DETAIL
 export const getKeywordDetails = async (req, res) => {
+    console.log("here");
     const { keywordId } = req.params;
     const { page = 1, limit = 10 } = req.query;
 

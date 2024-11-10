@@ -1,5 +1,7 @@
 import Show from "../models/show.js";
 import Genre from "../models/genre.js";
+import Keyword from "../models/keyword.js";
+import Tone from "../models/tone.js";
 import Network from "../models/network.js";
 import Production from "../models/production.js";
 import Credit from "../models/credit.js";
@@ -121,7 +123,9 @@ export const addNewShow = async (req, res) => {
                     let show = await Show.findOne({ id: item });
 
                     if (show) {
-                        return show._id;
+                        return {
+                            show: show._id,
+                        };
                     } else {
                         return null;
                     }
@@ -208,6 +212,15 @@ export const getShowCollection = async (req, res) => {
             }
         }
 
+        if (type === "keyword") {
+            const keywordDocument = await Keyword.findOne({ id });
+            if (keywordDocument) {
+                query.keywords = keywordDocument._id;
+            } else {
+                return res.status(404).json({ message: "Keyword not found" });
+            }
+        }
+
         if (type === "year") {
             const startOfYear = new Date(`${id}-01-01T00:00:00.000Z`);
             const endOfYear = new Date(`${id}-12-31T23:59:59.999Z`);
@@ -249,11 +262,15 @@ export const getShowDetails = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const details = await Show.findOne({ id }).populate("genres").populate({
-            path: "related_seasons.show",
-            model: "Show",
-            select: "_id id name original_name season_number",
-        });
+        const details = await Show.findOne({ id })
+            .populate("genres")
+            .populate("keywords")
+            .populate("tones")
+            .populate({
+                path: "related_seasons.show",
+                model: "Show",
+                select: "_id id name original_name season_number",
+            });
         if (!details) {
             return res.status(404).json({ message: "Show not found" });
         }
@@ -313,6 +330,40 @@ export const updateShow = async (req, res) => {
                 })
             );
             updates.genres = genreIds;
+        }
+
+        if (updates.keywords) {
+            const keywordIds = await Promise.all(
+                updates.keywords.map(async (item) => {
+                    let keyword = await Keyword.findOne({ id: item.id });
+                    if (!keyword) {
+                        keyword = await Keyword.create({
+                            name: item.name,
+                            original_name: item.original_name,
+                            id: item.id,
+                        });
+                    }
+                    return keyword._id;
+                })
+            );
+            updates.keywords = keywordIds;
+        }
+
+        if (updates.tones) {
+            const toneIds = await Promise.all(
+                updates.tones.map(async (item) => {
+                    let tone = await Tone.findOne({ id: item.id });
+                    if (!tone) {
+                        tone = await Tone.create({
+                            name: item.name,
+                            original_name: item.original_name,
+                            id: item.id,
+                        });
+                    }
+                    return tone._id;
+                })
+            );
+            updates.tones = toneIds;
         }
 
         if (updates.poster_path) {

@@ -1,36 +1,39 @@
-import Genre from "../models/genre.js";
+import Tone from "../models/tone.js";
 import Show from "../models/show.js";
 
-export const addGenre = async (req, res) => {
-    const genre = req.body;
+// CREATE A NEW TONE IN THE DASHBOARD
+export const createTone = async (req, res) => {
+    const tone = req.body;
 
     try {
-        const existingGenre = await Genre.findOne({ id: genre.id });
+        const existingTone = await Tone.findOne({ id: tone.id });
 
-        if (existingGenre) {
-            return res.status(400).json("Genre already exists");
+        if (existingTone) {
+            return res.status(400).json("Tone already exists");
         }
 
-        const newGenre = await Genre.create(genre);
+        const newTone = await Tone.create(tone);
 
-        res.status(200).json(newGenre);
-    } catch (error) {}
-};
-
-// get all genres
-export const getAllGenre = async (req, res) => {
-    try {
-        let genres = await Genre.find().sort({
-            rank: 1,
-        });
-        res.status(200).json(genres);
+        res.status(200).json(newTone);
     } catch (error) {
         res.status(500).json(error);
     }
 };
 
-//search genre
-export const searchGenre = async (req, res) => {
+// GET ALL TONE
+export const getAllTone = async (req, res) => {
+    try {
+        let tone = await Tone.find().sort({
+            id: 1,
+        });
+        res.status(200).json(tone);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+// SEARCH TONE
+export const searchTone = async (req, res) => {
     const { query, limit = 10 } = req.query;
 
     if (!query) {
@@ -41,7 +44,7 @@ export const searchGenre = async (req, res) => {
         // Create a regex for case-insensitive partial matching
         const regexQuery = new RegExp(query, "i");
 
-        const searchResults = await Genre.find({
+        const searchResults = await Tone.find({
             $or: [{ name: regexQuery }, { original_name: regexQuery }],
         })
             .limit(parseInt(limit))

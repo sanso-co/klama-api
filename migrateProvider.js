@@ -12,12 +12,12 @@ async function migrateShowModel() {
         // Get the database instance
         const db = mongoose.connection.db;
 
-        // Update all shows to add season_number field
+        // Update all shows to add keywords field if it doesn't exist
         const result = await db
             .collection("shows")
-            .updateMany({ season_number: { $exists: false } }, { $set: { season_number: 1 } });
+            .updateMany({ keywords: { $exists: false } }, { $set: { keywords: [] } });
 
-        console.log(`Successfully updated shows with season_number field`);
+        console.log(`Successfully updated shows with keywords field`);
         console.log(`Modified ${result.modifiedCount} documents`);
     } catch (error) {
         console.error("Error migrating show model:", error);

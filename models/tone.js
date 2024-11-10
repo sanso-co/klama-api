@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const keywordSchema = mongoose.Schema(
+const toneSchema = mongoose.Schema(
     {
         id: {
             type: Number,
@@ -21,6 +21,4 @@ const keywordSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-keywordSchema.index({ "shows.id": 1 });
-
-export default mongoose.model("Keyword", keywordSchema);
+export default mongoose.model("Tone", toneSchema);

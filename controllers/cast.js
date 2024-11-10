@@ -115,6 +115,12 @@ export const getCastsForShow = async (req, res) => {
             "id name original_name known_for_department profile_path"
         );
 
+        if (!castDoc) {
+            return res.status(404).json({
+                message: "Cast does't exist for this show",
+            });
+        }
+
         const result = castDoc.casts.map((cast) => ({
             id: cast.person.id,
             known_for_department: cast.person.known_for_department,

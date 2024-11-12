@@ -187,3 +187,56 @@ export const addShowToSubPeriodicList = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const removeShowFromSubPeriodicList = async (req, res) => {
+    const { collectionId, listId } = req.params;
+    const { showId } = req.body;
+
+    try {
+        // Validate that the show ID is a valid ObjectId
+        const showObjectId = new mongoose.Types.ObjectId(showId);
+
+        // Find the periodic collection first
+        const collection = await periodicCollection.findOne({
+            _id: collectionId,
+            "lists._id": listId,
+        });
+
+        if (!collection) {
+            return res.status(404).json({
+                message: "Periodic collection or list not found",
+            });
+        }
+
+        // Find the specific list
+        const targetList = collection.lists.id(listId);
+
+        // Check if show exists in the list
+        if (!targetList.shows.includes(showObjectId)) {
+            return res.status(400).json({
+                message: "Show does not exist in the list",
+            });
+        }
+
+        // Update the collection by pulling the show from the array
+        const updatedCollection = await periodicCollection.findOneAndUpdate(
+            {
+                _id: collectionId,
+                "lists._id": listId,
+            },
+            {
+                $pull: {
+                    "lists.$.shows": showObjectId,
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        res.status(200).json(updatedCollection);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

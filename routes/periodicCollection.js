@@ -6,6 +6,7 @@ import {
     addListToPeriodicCollection,
     getAListFromPeriodicCollection,
     addShowToSubPeriodicList,
+    removeShowFromSubPeriodicList,
 } from "../controllers/periodicCollection.js";
 import { checkAdmin } from "../middleware/checkAuth.js";
 
@@ -43,5 +44,10 @@ router.get("/:collectionId/sub/:listId", getAListFromPeriodicCollection);
 // @desc Add a new show to the list
 // @access Private
 router.patch("/:collectionId/add/:listId", checkAdmin, addShowToSubPeriodicList);
+
+// @route patch /periodic-collection/remove/:collectionId/:listId
+// @desc Remove a show from the list
+// @access Private
+router.patch("/:collectionId/remove/:listId", checkAdmin, removeShowFromSubPeriodicList);
 
 export default router;

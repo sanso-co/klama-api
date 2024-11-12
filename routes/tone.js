@@ -1,12 +1,13 @@
 import express from "express";
 import { createTone, getAllTone, searchTone } from "../controllers/tone.js";
+import { checkAdmin } from "../middleware/checkAuth.js";
 
 const router = express.Router();
 
 // @route POST /tone
 // @desc Create a new tone
 // @access Private
-router.post("/", createTone);
+router.post("/", checkAdmin, createTone);
 
 // @route GET /tone
 // @desc Get all tone

@@ -9,47 +9,48 @@ import {
     updateProvider,
     searchProvider,
 } from "../controllers/provider.js";
+import { checkAdmin } from "../middleware/checkAuth.js";
 
 const router = express.Router();
 
 // @route POST /provider
 // @desc Create a new provider
 // @access Private
-router.post("/", addProvider);
+router.post("/", checkAdmin, addProvider);
 
 // @route GET /provider
 // @desc Get all providers
-// @access Private
+// @access Public
 router.get("/", getAllProviders);
 
 // @route GET /provider/show/:id
 // @desc Get providers that belong to a show
-// @access Private
+// @access Public
 router.get("/show/:showId", getProvidersForShow);
 
 // @route GET /provider/:id
 // @desc Get provider details
-// @access Private
+// @access Public
 router.get("/detail/:providerId", getProviderDetails);
 
 // @route patch /provider/add/:id
 // @desc Add a new show to provider
 // @access Private
-router.patch("/add/:id", addShowToProvider);
+router.patch("/add/:id", checkAdmin, addShowToProvider);
 
 // @route patch /provider/remove/:id
 // @desc Remove a show from provider
 // @access Private
-router.patch("/remove/:id", removeShowFromProvider);
+router.patch("/remove/:id", checkAdmin, removeShowFromProvider);
 
 // @route patch /provider/modify/:id
 // @desc Update a provider
 // @access Private
-router.patch("/modify/:id", updateProvider);
+router.patch("/modify/:id", checkAdmin, updateProvider);
 
 // @route GET /provider/search
 // @desc Search provider
-// @access Private
+// @access Public
 router.get("/search", searchProvider);
 
 export default router;

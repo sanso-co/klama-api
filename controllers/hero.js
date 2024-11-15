@@ -35,18 +35,8 @@ export const addHeroItem = async (req, res) => {
             img: imgUrl,
         };
 
-        const existingHero = await Hero.findOne({ order });
-
-        let result;
-        if (existingHero) {
-            result = await Hero.findOneAndUpdate({ order }, heroData, {
-                new: true,
-                runValidators: true,
-            });
-        } else {
-            const newHero = new Hero(heroData);
-            result = await newHero.save();
-        }
+        const newHero = new Hero(heroData);
+        result = await newHero.save();
 
         res.status(200).json(result);
     } catch (error) {
@@ -55,7 +45,50 @@ export const addHeroItem = async (req, res) => {
     }
 };
 
-// get all hero
+// REMOVE HERO ITEM
+export const removeHeroItem = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedHero = await Hero.findByIdAndDelete(id);
+
+        if (!deletedHero) {
+            return res.status(404).json({ message: "Hero item not found." });
+        }
+        res.status(200).json({ message: "Hero item removed successfully." });
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+// UPDATE HERO ITEM
+export const updateHeroItem = async (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    const { img, title, tag, url, order } = req.body;
+
+    try {
+        const heroData = {
+            title,
+            tag,
+            order,
+            url,
+            img,
+        };
+
+        const updatedHero = await Hero.findByIdAndUpdate(id, heroData, { new: true });
+
+        if (!updatedHero) {
+            return res.status(404).json({ message: "Hero item not found." });
+        }
+
+        res.status(200).json({ message: "Hero item updated successfully." });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+};
+
+// GET ALL HERO ITEMS
 export const getAllHero = async (req, res) => {
     try {
         let heros = await Hero.find().sort({

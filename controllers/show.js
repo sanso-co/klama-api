@@ -145,24 +145,50 @@ export const addNewShow = async (req, res) => {
 
 // get all shows
 export const getAllShow = async (req, res) => {
-    const { page = 1, limit = 40, genre, year, sort = "alphabetical" } = req.query;
+    const {
+        page = 1,
+        limit = 40,
+        keyword = "",
+        genre = "",
+        tone = "",
+        from = "",
+        to = "",
+        sort = "alphabetical",
+    } = req.query;
 
     try {
         const query = {};
 
         if (genre) {
-            const genreDocument = await Genre.findOne({ id: genre });
-            if (genreDocument) {
-                query.genres = genreDocument._id;
-            } else {
-                return res.status(404).json({ message: "Genre not found" });
-            }
+            query.genres = genre;
         }
 
-        if (year) {
-            const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`);
-            const endOfYear = new Date(`${year}-12-31T23:59:59.999Z`);
-            query.first_air_date = { $gte: startOfYear, $lte: endOfYear };
+        if (keyword) {
+            // If keyword is comma-separated string, split it into array
+            const keywordIds = keyword.includes(",")
+                ? keyword.split(",")
+                : Array.isArray(keyword)
+                ? keyword
+                : [keyword];
+
+            // Use $in operator to match any of the keywords
+            query.keywords = { $in: keywordIds };
+        }
+
+        if (tone) {
+            query.tones = tone;
+        }
+
+        if (from || to) {
+            query.first_air_date = {};
+
+            if (from) {
+                query.first_air_date.$gte = new Date(`${from}-01-01T00:00:00.000Z`);
+            }
+
+            if (to) {
+                query.first_air_date.$lte = new Date(`${to}-12-31T23:59:59.999Z`);
+            }
         }
 
         const sortOption = sort === "newest" ? { first_air_date: -1 } : { original_name: 1 };
@@ -173,10 +199,9 @@ export const getAllShow = async (req, res) => {
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-
         const paginatedShows = shows.slice(startIndex, endIndex);
 
-        const result = {
+        res.status(200).json({
             results: paginatedShows,
             totalDocs: shows.length,
             limit: parseInt(limit, 10),
@@ -187,9 +212,7 @@ export const getAllShow = async (req, res) => {
             hasNextPage: endIndex < shows.length,
             prevPage: page > 1 ? page - 1 : null,
             nextPage: endIndex < shows.length ? page + 1 : null,
-        };
-
-        res.status(200).json(result);
+        });
     } catch (error) {
         res.status(500).json(error);
     }

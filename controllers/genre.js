@@ -17,6 +17,28 @@ export const addGenre = async (req, res) => {
     } catch (error) {}
 };
 
+// UPDATE GENRE
+export const updateGenre = async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    try {
+        const updatedGenre = await Genre.findOneAndUpdate(
+            { id },
+            { $set: updatedData },
+            { new: true }
+        );
+
+        if (!updatedGenre) {
+            return res.status(404).json("Genre not found");
+        }
+
+        res.status(200).json(updatedGenre);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 // get all genres
 export const getAllGenre = async (req, res) => {
     try {

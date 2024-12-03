@@ -221,7 +221,7 @@ export const getAllShow = async (req, res) => {
 // get show collection by type
 export const getShowCollection = async (req, res) => {
     const { type, id } = req.params;
-    const { page = 1, limit = 40 } = req.query;
+    const { page = 1, limit = 30 } = req.query;
 
     try {
         const query = {};

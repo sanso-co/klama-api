@@ -44,7 +44,7 @@ export const getPermanentCollectoinDetails = async (req, res) => {
         const paginatedShows = collection.shows.slice(startIndex, endIndex);
 
         const result = {
-            result: paginatedShows,
+            results: paginatedShows,
             totalDocs: collection.shows.length,
             limit: parseInt(limit, 10),
             totalPages: Math.ceil(collection.shows.length / limit),

@@ -169,7 +169,7 @@ export const getGenreDetails = async (req, res) => {
 // get keyword details
 export const getCreditDetails = async (req, res) => {
     const { creditId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 30 } = req.query;
 
     try {
         const credit = await Credit.findOne({ id: creditId }).populate({

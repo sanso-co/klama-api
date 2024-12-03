@@ -3,7 +3,7 @@ import Person from "../models/person.js";
 // get person details
 export const getPersonDetails = async (req, res) => {
     const { personId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 30 } = req.query;
 
     try {
         const person = await Person.findOne({ id: personId }).populate({

@@ -111,11 +111,15 @@ export const getAListFromPeriodicCollection = async (req, res) => {
                 ? collection.lists[collection.lists.length - 1]
                 : collection.lists[0];
 
-        if (sort === "ascending" && response.shows && response.shows.length > 0) {
+        if (
+            (sort === "ascending" || sort === "descending") &&
+            response.shows &&
+            response.shows.length > 0
+        ) {
             response.shows.sort((a, b) => {
                 const dateA = new Date(a.first_air_date);
                 const dateB = new Date(b.first_air_date);
-                return dateA - dateB;
+                return sort === "ascending" ? dateA - dateB : dateB - dateA;
             });
         }
 

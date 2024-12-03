@@ -79,7 +79,7 @@ export const getProvidersForShow = async (req, res) => {
 // GET PROVIDER DETAILS
 export const getProviderDetails = async (req, res) => {
     const { providerId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 30 } = req.query;
 
     try {
         const collection = await Provider.findOne({ id: providerId }).populate({

@@ -42,6 +42,16 @@ const showSchema = mongoose.Schema(
                 },
             },
         },
+        trailer: [
+            {
+                key: {
+                    type: String,
+                },
+                site: {
+                    type: String,
+                },
+            },
+        ],
         genres: [
             {
                 type: mongoose.Schema.Types.ObjectId,

@@ -400,6 +400,16 @@ export const updateShow = async (req, res) => {
             };
         }
 
+        if (updates.trailer) {
+            // trailer is always an array with a single object for now
+            updates.trailer = [
+                {
+                    key: updates.trailer.key,
+                    site: updates.trailer.site,
+                },
+            ];
+        }
+
         const updatedShow = await Show.findOneAndUpdate(
             { id: id },
             { $set: updates },

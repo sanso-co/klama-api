@@ -2,7 +2,7 @@ import cloudinary from "../middleware/cloudinary.js";
 import Hero from "../models/hero.js";
 
 export const addHeroItem = async (req, res) => {
-    const { img, title, tag, url, order } = req.body;
+    const { img, title, tagline, tag, url, order } = req.body;
 
     try {
         const isValidUrl = (string) => {
@@ -29,6 +29,7 @@ export const addHeroItem = async (req, res) => {
 
         const heroData = {
             title,
+            tagline,
             tag,
             order,
             url,
@@ -65,11 +66,12 @@ export const removeHeroItem = async (req, res) => {
 export const updateHeroItem = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const { img, title, tag, url, order } = req.body;
+    const { img, title, tagline, tag, url, order } = req.body;
 
     try {
         const heroData = {
             title,
+            tagline,
             tag,
             order,
             url,

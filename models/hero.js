@@ -25,6 +25,9 @@ const heroSchema = mongoose.Schema(
         img: {
             type: String,
         },
+        tagline: {
+            type: String,
+        },
     },
     { timestamps: true }
 );

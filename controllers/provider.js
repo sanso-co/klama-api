@@ -2,6 +2,7 @@ import Provider from "../models/provider.js";
 import Show from "../models/show.js";
 
 import cloudinary from "../middleware/cloudinary.js";
+import { getSortOptions, sortShows } from "../utility/sortUtils.js";
 
 // ADD NEW PROVIDER
 export const addProvider = async (req, res) => {
@@ -79,9 +80,11 @@ export const getProvidersForShow = async (req, res) => {
 // GET PROVIDER DETAILS
 export const getProviderDetails = async (req, res) => {
     const { providerId } = req.params;
-    const { page = 1, limit = 30 } = req.query;
+    const { page = 1, limit = 30, sort = "date_desc" } = req.query;
 
     try {
+        const sortOptions = getSortOptions(sort);
+
         const collection = await Provider.findOne({ id: providerId }).populate({
             path: "shows",
             select: "_id id name original_name poster_path genres first_air_date popularity_score",
@@ -91,10 +94,12 @@ export const getProviderDetails = async (req, res) => {
             return res.status(404).json({ message: "Collection not found" });
         }
 
+        const sortedShows = sortShows(collection.shows, sortOptions);
+
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
-        const paginatedShows = collection.shows.slice(startIndex, endIndex);
+        const paginatedShows = sortedShows.slice(startIndex, endIndex);
 
         const result = {
             results: paginatedShows,

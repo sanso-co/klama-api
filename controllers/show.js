@@ -7,6 +7,8 @@ import Production from "../models/production.js";
 import Credit from "../models/credit.js";
 import ShowType from "../models/showType.js";
 
+import { getSortOptions, sortShows } from "../utility/sortUtils.js";
+
 const genreMapping = {
     10749: 100, // Romance
     18: 200, // Drama
@@ -221,10 +223,11 @@ export const getAllShow = async (req, res) => {
 // get show collection by type
 export const getShowCollection = async (req, res) => {
     const { type, id } = req.params;
-    const { page = 1, limit = 30 } = req.query;
+    const { page = 1, limit = 30, sort = "date_desc" } = req.query;
 
     try {
         const query = {};
+        const sortOptions = getSortOptions(sort);
 
         if (type === "genre") {
             const genreDocument = await Genre.findOne({ id });
@@ -252,7 +255,7 @@ export const getShowCollection = async (req, res) => {
 
         const shows = await Show.find(query)
             .select("id name original_name poster_path first_air_date popularity_score")
-            .sort({ original_name: 1 });
+            .sort(sortOptions);
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;

@@ -1,6 +1,8 @@
 import Credit from "../models/credit.js";
 import Show from "../models/show.js";
 
+import { getSortOptions, sortShows } from "../utility/sortUtils.js";
+
 export const createCredit = async (req, res) => {
     const credit = req.body;
 
@@ -169,9 +171,11 @@ export const getGenreDetails = async (req, res) => {
 // get keyword details
 export const getCreditDetails = async (req, res) => {
     const { creditId } = req.params;
-    const { page = 1, limit = 30 } = req.query;
+    const { page = 1, limit = 30, sort = "date_desc" } = req.query;
 
     try {
+        const sortOptions = getSortOptions(sort);
+
         const credit = await Credit.findOne({ id: creditId }).populate({
             path: "shows",
             select: "id name original_name poster_path first_air_date",
@@ -181,10 +185,12 @@ export const getCreditDetails = async (req, res) => {
             return res.status(404).json({ message: "Credit not found" });
         }
 
+        const sortedShows = sortShows(credit.shows, sortOptions);
+
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
-        const paginatedShows = credit.shows.slice(startIndex, endIndex);
+        const paginatedShows = sortedShows.slice(startIndex, endIndex);
         const result = {
             results: paginatedShows,
             totalDocs: credit.shows.length,

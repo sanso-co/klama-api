@@ -1,11 +1,15 @@
 import Person from "../models/person.js";
 
+import { getSortOptions, sortShows } from "../utility/sortUtils.js";
+
 // get person details
 export const getPersonDetails = async (req, res) => {
     const { personId } = req.params;
-    const { page = 1, limit = 30 } = req.query;
+    const { page = 1, limit = 30, sort = "date_desc" } = req.query;
 
     try {
+        const sortOptions = getSortOptions(sort);
+
         const person = await Person.findOne({ id: personId }).populate({
             path: "shows",
             select: "_id id name original_name poster_path genres first_air_date popularity_score",
@@ -15,10 +19,12 @@ export const getPersonDetails = async (req, res) => {
             return res.status(404).json({ message: "Person not found" });
         }
 
+        const sortedShows = sortShows(person.shows, sortOptions);
+
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
-        const paginatedShows = person.shows.slice(startIndex, endIndex);
+        const paginatedShows = sortedShows.slice(startIndex, endIndex);
 
         const result = {
             results: paginatedShows,

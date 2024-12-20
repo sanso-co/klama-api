@@ -7,12 +7,14 @@ export const createCredit = async (req, res) => {
     const credit = req.body;
 
     try {
-        const existingPerson = await Credit.findOne({ id: credit.id });
+        const existingPerson = await Credit.findOne({
+            id: credit.id,
+            job: credit.job,
+        });
 
         if (existingPerson) {
             return res.status(400).json("Credit already exists");
         }
-
         const newCredit = await Credit.create(credit);
 
         res.status(200).json(newCredit);
@@ -73,13 +75,12 @@ export const getCreditForShow = async (req, res) => {
             return res.status(404).json({ message: "Drama not found" });
         }
 
-        const credits = await Credit.find({ shows: show._id })
-            .select("id name original_name job")
-            .sort({ job: 1 });
+        const credits = await Credit.find({ shows: show._id }).sort({ job: 1 });
 
         const response = {
             id: showId,
             results: credits.map((credit) => ({
+                _id: credit._id,
                 id: credit.id,
                 name: credit.name,
                 original_name: credit.original_name,
@@ -108,7 +109,7 @@ export const searchKeyword = async (req, res) => {
             $or: [{ name: regexQuery }, { original_name: regexQuery }],
         })
             .limit(parseInt(limit))
-            .select("_id id name original_name rank")
+            .select("_id id name original_name job rank")
             .lean();
 
         res.status(200).json(searchResults);
@@ -169,6 +170,54 @@ export const getGenreDetails = async (req, res) => {
 };
 
 // get keyword details
+// export const getCreditDetails = async (req, res) => {
+//     const { creditId } = req.params;
+//     const { page = 1, limit = 30, sort = "date_desc" } = req.query;
+
+//     try {
+//         const sortOptions = getSortOptions(sort);
+
+//         const credit = await Credit.findOne({ id: creditId }).populate({
+//             path: "shows",
+//             select: "id name original_name poster_path first_air_date",
+//         });
+
+//         if (!credit) {
+//             return res.status(404).json({ message: "Credit not found" });
+//         }
+
+//         const sortedShows = sortShows(credit.shows, sortOptions);
+
+//         const startIndex = (page - 1) * limit;
+//         const endIndex = page * limit;
+
+//         const paginatedShows = sortedShows.slice(startIndex, endIndex);
+//         const result = {
+//             results: paginatedShows,
+//             totalDocs: credit.shows.length,
+//             limit: parseInt(limit, 10),
+//             totalPages: Math.ceil(credit.shows.length / limit),
+//             page: parseInt(page, 10),
+//             pagingCounter: startIndex + 1,
+//             hasPrevPage: page > 1,
+//             hasNextPage: endIndex < credit.shows.length,
+//             prevPage: page > 1 ? page - 1 : null,
+//             nextPage: endIndex < credit.shows.length ? page + 1 : null,
+//         };
+
+//         res.status(200).json({
+//             id: credit.id,
+//             name: credit.name,
+//             original_name: credit.original_name,
+//             job: credit.job,
+//             shows: result,
+//         });
+//     } catch (error) {
+//         console.error("Error in getKeywordDetails:", error);
+//         res.status(500).json({ message: "An error occurred while fetching keyword details" });
+//     }
+// };
+
 export const getCreditDetails = async (req, res) => {
     const { creditId } = req.params;
     const { page = 1, limit = 30, sort = "date_desc" } = req.query;
@@ -176,39 +225,44 @@ export const getCreditDetails = async (req, res) => {
     try {
         const sortOptions = getSortOptions(sort);
 
-        const credit = await Credit.findOne({ id: creditId }).populate({
+        const credits = await Credit.find({ id: creditId }).populate({
             path: "shows",
             select: "id name original_name poster_path first_air_date",
         });
 
-        if (!credit) {
+        if (!credits || credits.length === 0) {
             return res.status(404).json({ message: "Credit not found" });
         }
 
-        const sortedShows = sortShows(credit.shows, sortOptions);
+        const uniqueShows = Array.from(
+            new Set(credits.flatMap((credit) => credit.shows.map((show) => JSON.stringify(show))))
+        ).map((showStr) => JSON.parse(showStr));
+
+        const jobs = credits.map((credit) => credit.job);
+
+        const sortedShows = sortShows(uniqueShows, sortOptions);
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-
         const paginatedShows = sortedShows.slice(startIndex, endIndex);
         const result = {
             results: paginatedShows,
-            totalDocs: credit.shows.length,
+            totalDocs: uniqueShows.length,
             limit: parseInt(limit, 10),
-            totalPages: Math.ceil(credit.shows.length / limit),
+            totalPages: Math.ceil(uniqueShows.length / limit),
             page: parseInt(page, 10),
             pagingCounter: startIndex + 1,
             hasPrevPage: page > 1,
-            hasNextPage: endIndex < credit.shows.length,
+            hasNextPage: endIndex < uniqueShows.length,
             prevPage: page > 1 ? page - 1 : null,
-            nextPage: endIndex < credit.shows.length ? page + 1 : null,
+            nextPage: endIndex < uniqueShows.length ? page + 1 : null,
         };
 
         res.status(200).json({
-            id: credit.id,
-            name: credit.name,
-            original_name: credit.original_name,
-            job: credit.job,
+            id: parseInt(creditId),
+            name: credits[0].name,
+            original_name: credits[0].original_name,
+            jobs: jobs,
             shows: result,
         });
     } catch (error) {

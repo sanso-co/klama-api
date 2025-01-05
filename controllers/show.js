@@ -290,6 +290,7 @@ export const getShowDetails = async (req, res) => {
     try {
         const details = await Show.findOne({ id })
             .populate("genres")
+            .populate("networks")
             .populate("keywords")
             .populate("tones")
             .populate({

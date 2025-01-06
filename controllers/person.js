@@ -43,7 +43,7 @@ export const getPersonDetails = async (req, res) => {
             id: person.id,
             name: person.name,
             original_name: person.original_name,
-            profile_path: person.profile_path,
+            img_path: person.profile_path,
             shows: result,
         });
     } catch (error) {

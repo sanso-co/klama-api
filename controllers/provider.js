@@ -116,6 +116,7 @@ export const getProviderDetails = async (req, res) => {
 
         res.status(200).json({
             name: collection.name,
+            img_path: collection.logo_path,
             description: collection.description,
             shows: result,
         });

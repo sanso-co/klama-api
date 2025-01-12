@@ -4,13 +4,29 @@ export const generateToken = (user) => {
     return jwt.sign(
         {
             _id: user._id,
-            name: user.name,
+            username: user.username,
             email: user.email,
             isAdmin: user.isAdmin,
         },
         process.env.JWT_KEY,
         { expiresIn: "1d" }
     );
+};
+
+export const verifyToken = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.split(" ")[1];
+
+        if (!token) {
+            return res.status(401).json({ message: "No token provided" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: "Invalid token" });
+    }
 };
 
 export const checkToken = (req, res, next) => {

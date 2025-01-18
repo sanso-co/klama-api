@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { PersonType } from "../interfaces/person";
+import { IPerson } from "../interfaces/person";
 
 const personSchema = new mongoose.Schema(
     {
@@ -32,4 +32,4 @@ const personSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<PersonType>("Person", personSchema);
+export default mongoose.model<IPerson>("Person", personSchema);

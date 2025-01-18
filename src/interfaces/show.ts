@@ -1,6 +1,6 @@
 import mongoose, { Document, Types } from "mongoose";
-import { KeywordType } from "./keyword";
-import { GenreType } from "./genre";
+import { IKeyword } from "./keyword";
+import { IGenre } from "./genre";
 
 interface RelatedSeason {
     season: number;
@@ -36,27 +36,27 @@ interface OriginalStory {
     title: Title;
 }
 
-export interface ShowType extends Document {
+export interface IShow extends Document {
     id: number;
     name: string;
     original_name: string;
-    season_number: number;
-    related_seasons: RelatedSeason[];
-    poster_path: RegionalPosterPaths;
-    trailer: Trailer[];
-    genres: GenreType[];
-    keywords: KeywordType[];
-    tones: mongoose.Types.ObjectId[];
-    credits: mongoose.Types.ObjectId[];
     overview?: string;
     original_overview?: string;
     first_air_date: Date;
     number_of_episodes?: number;
+    season_number: number;
     homepage?: string;
+    poster_path: RegionalPosterPaths;
+    trailer: Trailer[];
+    original_story: OriginalStory;
+    related_seasons: RelatedSeason[];
+    genres: mongoose.Types.ObjectId[] | IGenre[];
+    credits: mongoose.Types.ObjectId[];
     networks: mongoose.Types.ObjectId[];
     production_companies: mongoose.Types.ObjectId[];
+    keywords: mongoose.Types.ObjectId[] | IKeyword[];
+    tones: mongoose.Types.ObjectId[];
     show_type: mongoose.Types.ObjectId;
-    original_story: OriginalStory;
     popularity_score: number;
     createdAt: Date;
     updatedAt: Date;
@@ -70,4 +70,39 @@ export interface ShowFindType {
         $gte?: Date;
         $lte?: Date;
     };
+}
+
+export interface ITMDBShow {
+    id: number;
+    name: string;
+    original_name: string;
+    poster_path: RegionalPosterPaths;
+    genres: {
+        id: number;
+        name: string;
+    }[];
+    overview: string;
+    first_air_date: Date;
+    number_of_episodes: number;
+    homepage: string;
+    networks: {
+        id: number;
+        logo_path: string;
+        name: string;
+        origin_country: string;
+    }[];
+    production_companies: {
+        id: number;
+        logo_path: string;
+        name: string;
+        origin_country: string;
+    }[];
+    created_by: {
+        id: number;
+        credit_id: string;
+        name: string;
+        original_name: string;
+        gender: number;
+        profile_path: null;
+    }[];
 }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { HeroType } from "../interfaces/hero";
+import { IHero } from "../interfaces/hero";
 
 const heroSchema = new mongoose.Schema(
     {
@@ -34,4 +34,4 @@ const heroSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<HeroType>("Hero", heroSchema);
+export default mongoose.model<IHero>("Hero", heroSchema);

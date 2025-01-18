@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
+import { ProductionType } from "../interfaces/production";
 
-import { ITone } from "../interfaces/tone";
-
-const toneSchema = new mongoose.Schema(
+const productionSchema = new mongoose.Schema(
     {
         id: {
             type: Number,
             required: true,
+            unique: true,
         },
         name: {
             type: String,
@@ -15,12 +15,11 @@ const toneSchema = new mongoose.Schema(
         original_name: {
             type: String,
         },
-        rank: {
-            type: Number,
-            default: 999,
+        logo_path: {
+            type: String,
         },
     },
     { timestamps: true }
 );
 
-export default mongoose.model<ITone>("Tone", toneSchema);
+export default mongoose.model<ProductionType>("Production", productionSchema);

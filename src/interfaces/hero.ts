@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 
-export interface HeroType extends Document {
+export interface IHero extends Document {
     order: number;
     title: string;
     tag?: {

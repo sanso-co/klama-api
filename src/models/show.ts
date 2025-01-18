@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { ShowType } from "../interfaces/show";
+import { IShow } from "../interfaces/show";
 
-const showSchema = new Schema<ShowType>(
+const showSchema = new Schema<IShow>(
     {
         id: {
             type: Number,

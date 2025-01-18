@@ -6,4 +6,6 @@ export * from "./hero";
 export * from "./provider";
 export * from "./person";
 export * from "./cast";
+export * from "./showType";
+export * from "./production";
 export * from "./periodicCollection";

@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 
-export interface KeywordType extends Document {
+export interface IKeyword extends Document {
     _id: mongoose.Types.ObjectId;
     id: number;
     name: string;

@@ -1,5 +1,5 @@
 import { SortType } from "./option";
-import { ShowType } from "./show";
+import { IShow } from "./show";
 
 export interface RequestQuery {
     page?: string;
@@ -14,7 +14,7 @@ export interface RequestQuery {
 }
 
 export interface PaginationResponseType {
-    results: ShowType[];
+    results: IShow[];
     totalDocs: number;
     limit: number;
     totalPages: number;

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { CastType } from "../interfaces/cast";
+import { ICast } from "../interfaces/cast";
 
 const castSchema = new mongoose.Schema(
     {
@@ -32,4 +32,4 @@ const castSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<CastType>("Cast", castSchema);
+export default mongoose.model<ICast>("Cast", castSchema);

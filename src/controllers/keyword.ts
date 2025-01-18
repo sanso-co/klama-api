@@ -1,19 +1,19 @@
 import { RequestHandler } from "express";
-import Genre from "../models/genre";
+import Keyword from "../models/keyword";
 import { RequestQuery } from "../interfaces/api";
 
-export const getAllGenre: RequestHandler = async (req, res) => {
+export const getAllKeyword: RequestHandler = async (req, res) => {
     try {
-        let genres = await Genre.find().sort({
-            rank: 1,
+        let keywords = await Keyword.find().sort({
+            id: 1,
         });
-        res.status(200).json(genres);
+        res.status(200).json(keywords);
     } catch (error) {
         res.status(500).json(error);
     }
 };
 
-export const searchGenre: RequestHandler<{}, {}, {}, RequestQuery> = async (req, res) => {
+export const searchKeyword: RequestHandler<{}, {}, {}, RequestQuery> = async (req, res) => {
     const { query, limit = "10" } = req.query;
 
     if (!query) {
@@ -25,7 +25,7 @@ export const searchGenre: RequestHandler<{}, {}, {}, RequestQuery> = async (req,
         // Create a regex for case-insensitive partial matching
         const regexQuery = new RegExp(query, "i");
 
-        const searchResults = await Genre.find({
+        const searchResults = await Keyword.find({
             $or: [{ name: regexQuery }, { original_name: regexQuery }],
         })
             .limit(parseInt(limit))

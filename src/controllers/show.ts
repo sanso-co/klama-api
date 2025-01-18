@@ -1,15 +1,23 @@
 import { RequestHandler } from "express";
-import { SortOrder } from "mongoose";
+import { SortOrder, Types } from "mongoose";
+
+import { DocumentType } from "../interfaces/document";
+import { PaginationResponseType, RequestQuery } from "../interfaces/api";
+import { ShowFindType, IShow, ITMDBShow } from "../interfaces/show";
 
 import Show from "../models/show";
 import Genre from "../models/genre";
 import Keyword from "../models/keyword";
+import Network from "../models/network";
+import Production from "../models/production";
+import Credit from "../models/credit";
+import ShowType from "../models/showType";
 
-import { PaginationResponseType, RequestQuery } from "../interfaces/api";
 import { getSortOptions } from "../utilities/sortUtils";
-import { ShowFindType } from "../interfaces/show";
-import { DocumentType } from "../interfaces/document";
 import { paginatedResult } from "../utilities/paginateUtils";
+import { genreMapping } from "../helper/genre";
+import { IKeyword } from "../interfaces/keyword";
+import { IGenre } from "../interfaces/genre";
 
 export const getAllShow: RequestHandler<
     {},
@@ -186,6 +194,169 @@ export const searchShow: RequestHandler<{}, {}, {}, RequestQuery> = async (req, 
             .lean();
 
         res.status(200).json(searchResults);
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
+interface AddBody {
+    show: ITMDBShow;
+}
+
+export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => {
+    const { show: tmdbShow } = req.body;
+
+    try {
+        const existingShow = await Show.findOne({ id: tmdbShow.id });
+
+        if (existingShow) {
+            res.status(400).json("Show already exists");
+            return;
+        }
+
+        const showData: Partial<IShow> = {
+            id: tmdbShow.id,
+            name: tmdbShow.name,
+            original_name: tmdbShow.original_name,
+            poster_path: tmdbShow.poster_path,
+            overview: tmdbShow.overview,
+            first_air_date: tmdbShow.first_air_date,
+            number_of_episodes: tmdbShow.number_of_episodes,
+            homepage: tmdbShow.homepage,
+        };
+
+        const genreIds = await Promise.all(
+            tmdbShow.genres.map(async (item) => {
+                const mappedGenreId = genreMapping[item.id];
+
+                if (mappedGenreId) {
+                    let genre = await Genre.findOne({ id: mappedGenreId });
+
+                    if (genre) {
+                        return genre._id;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            })
+        );
+
+        showData.genres = genreIds.filter(Boolean) as Types.ObjectId[];
+
+        const networkIds = await Promise.all(
+            tmdbShow.networks.map(async (networkItem) => {
+                let network = await Network.findOne({ id: networkItem.id });
+                if (!network) {
+                    network = await Network.create({
+                        id: networkItem.id,
+                        name: networkItem.name,
+                        logo_path: networkItem.logo_path,
+                    });
+                }
+                return network._id;
+            })
+        );
+
+        showData.networks = networkIds;
+
+        const productionIds = await Promise.all(
+            tmdbShow.production_companies.map(async (productionItem) => {
+                let production = await Production.findOne({ id: productionItem.id });
+                if (!production) {
+                    production = await Production.create({
+                        id: productionItem.id,
+                        name: productionItem.name,
+                        logo_path: productionItem.logo_path,
+                    });
+                }
+                return production._id;
+            })
+        );
+
+        showData.production_companies = productionIds;
+
+        const creditIds = await Promise.all(
+            tmdbShow.created_by.map(async (creditItem) => {
+                let credit = await Credit.findOne({ id: creditItem.id });
+                if (!credit) {
+                    credit = await Credit.create({
+                        id: creditItem.id,
+                        name: creditItem.name,
+                        original_name: creditItem.original_name,
+                        job: "",
+                    });
+                }
+                return credit._id;
+            })
+        );
+
+        showData.credits = creditIds;
+
+        let showType = await ShowType.findOne({ id: 1 });
+        if (showType) {
+            showData.show_type = showType._id;
+        }
+        const newShow = await Show.create(showData);
+
+        res.status(200).json(newShow);
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
+export const updateShow: RequestHandler = async (req, res) => {
+    const { id } = req.params;
+    const updates: { keywords?: IKeyword[]; genres?: IGenre[] } = req.body;
+
+    try {
+        let updatedData: Partial<IShow> = {};
+
+        if (updates.genres) {
+            const genreIds = await Promise.all(
+                updates.genres.map(async (item) => {
+                    let genre = await Genre.findOne({ id: item.id });
+                    if (!genre) {
+                        genre = await Genre.create({
+                            name: item.name,
+                            original_name: item.original_name,
+                            id: item.id,
+                        });
+                    }
+                    return genre._id;
+                })
+            );
+            updatedData.genres = genreIds;
+        }
+
+        if (updates.keywords) {
+            const keywordIds = await Promise.all(
+                updates.keywords.map(async (item) => {
+                    let keyword = await Keyword.findOne({ id: item.id });
+                    if (!keyword) {
+                        keyword = await Keyword.create({
+                            name: item.name,
+                            original_name: item.original_name,
+                            id: item.id,
+                        });
+                    }
+                    return keyword._id;
+                })
+            );
+            updatedData.keywords = keywordIds;
+        }
+
+        const updatedShow = await Show.findOneAndUpdate(
+            { id: id },
+            { $set: updatedData },
+            { new: true, runValidators: true }
+        );
+        if (!updatedShow) {
+            res.status(404).json({ message: "Show not found" });
+            return;
+        }
+        res.status(200).json(updatedShow);
     } catch (error) {
         res.status(500).json({ error });
     }

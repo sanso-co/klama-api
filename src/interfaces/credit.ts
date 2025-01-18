@@ -1,10 +1,11 @@
-import { Document } from "mongoose";
-import { ShowType } from "./show";
+import mongoose, { Document } from "mongoose";
+import { IShow } from "./show";
 
-export interface CreditType extends Document {
+export interface ICredit extends Document {
+    _id: mongoose.Types.ObjectId;
     id: number;
-    name?: string;
+    name: string;
     original_name?: string;
     job?: string;
-    shows: ShowType[];
+    shows: IShow[];
 }

@@ -1,12 +1,13 @@
-import { Document } from "mongoose";
-import { PersonType } from "./person";
+import mongoose, { Document } from "mongoose";
 
-export interface CastType extends Document {
+export interface IRole {
+    person: mongoose.Types.ObjectId;
+    role: string;
+    original_role: string;
+    order: number;
+}
+
+export interface ICast extends Document {
     id: number;
-    casts: {
-        person: PersonType;
-        role: string;
-        original_role: string;
-        order: number;
-    }[];
+    casts: IRole[];
 }

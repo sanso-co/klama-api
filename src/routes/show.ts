@@ -1,5 +1,13 @@
 import express from "express";
-import { getAllShow, getShowDetails, getShowCategoryList, searchShow } from "../controllers/show";
+import {
+    getAllShow,
+    getShowDetails,
+    getShowCategoryList,
+    searchShow,
+    addShow,
+    updateShow,
+} from "../controllers/show";
+import { checkAdmin } from "../middleware/checkAuth";
 
 const router = express.Router();
 
@@ -22,5 +30,15 @@ router.get("/list/:category/:id", getShowCategoryList);
 // @desc Search show
 // @access Public
 router.get("/search", searchShow);
+
+// @route POST /show
+// @desc Add a new show to the list from TMDB
+// @access Private
+router.post("/", checkAdmin, addShow);
+
+// @route PATCH /show/:id
+// @desc update show
+// @access Private
+router.patch("/:id", checkAdmin, updateShow);
 
 export default router;

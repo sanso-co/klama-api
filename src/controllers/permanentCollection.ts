@@ -5,6 +5,15 @@ import { paginatedResult } from "../utilities/paginateUtils";
 import PermanentCollection from "../models/permanentCollection";
 import { PaginationResponseType, RequestQuery } from "../interfaces/api";
 
+export const getAllPermanentCollection: RequestHandler = async (req, res) => {
+    try {
+        const response = await PermanentCollection.find();
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 interface CollectionParams {
     id: string;
 }

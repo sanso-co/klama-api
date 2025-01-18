@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { KeywordType } from "../interfaces/keyword";
+import { IKeyword } from "../interfaces/keyword";
 
 const keywordSchema = new mongoose.Schema(
     {
@@ -23,4 +23,4 @@ const keywordSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<KeywordType>("Keyword", keywordSchema);
+export default mongoose.model<IKeyword>("Keyword", keywordSchema);

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { CreditType } from "../interfaces/credit";
+import { ICredit } from "../interfaces/credit";
 
 const creditSchema = new mongoose.Schema(
     {
@@ -28,4 +28,4 @@ const creditSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<CreditType>("Credit", creditSchema);
+export default mongoose.model<ICredit>("Credit", creditSchema);

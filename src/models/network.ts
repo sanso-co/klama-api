@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { NetworkType } from "../interfaces/network";
+import { INetwork } from "../interfaces/network";
 
 const networkSchema = new mongoose.Schema(
     {
@@ -22,4 +22,4 @@ const networkSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<NetworkType>("Network", networkSchema);
+export default mongoose.model<INetwork>("Network", networkSchema);

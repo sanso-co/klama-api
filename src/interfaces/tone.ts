@@ -1,6 +1,6 @@
-import mongoose, { Document } from "mongoose";
+import { Document } from "mongoose";
 
-export interface ToneType extends Document {
+export interface ITone extends Document {
     id: number;
     name: string;
     original_name?: string;

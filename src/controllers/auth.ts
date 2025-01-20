@@ -132,7 +132,7 @@ export const googleAuth: RequestHandler = async (req, res) => {
         if (!user.isProfileComplete) {
             res.status(202).json({
                 user: {
-                    id: user._id,
+                    _id: user._id,
                     email: user.email,
                     avatar: user.avatar,
                 },
@@ -145,7 +145,7 @@ export const googleAuth: RequestHandler = async (req, res) => {
         const authToken = generateToken(user);
         res.status(200).json({
             user: {
-                id: user._id,
+                _id: user._id,
                 email: user.email,
                 avatar: user.avatar,
                 username: user.username,

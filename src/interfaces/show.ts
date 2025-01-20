@@ -58,6 +58,7 @@ export interface IShow extends Document {
     tones: mongoose.Types.ObjectId[];
     show_type: mongoose.Types.ObjectId;
     popularity_score: number;
+    likes_count: number;
     createdAt: Date;
     updatedAt: Date;
 }

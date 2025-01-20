@@ -67,3 +67,17 @@ export const checkAdmin = (req: CustomRequest, res: Response, next: NextFunction
         return;
     }
 };
+
+export const checkUserAccess = (req: CustomRequest, res: Response, next: NextFunction): void => {
+    const { id } = req.params;
+    const requestingUser = req.user as CustomJwtPayload;
+
+    if (id !== requestingUser._id && !requestingUser.isAdmin) {
+        res.status(403).json({
+            message: "Access denied. You can only view your own profile or must be an admin.",
+        });
+        return;
+    }
+
+    next();
+};

@@ -131,6 +131,10 @@ const showSchema = new Schema<IShow>(
             type: Number,
             default: 0,
         },
+        likes_count: {
+            type: Number,
+            default: 0,
+        },
     },
     { timestamps: true }
 );
@@ -144,4 +148,4 @@ showSchema.index({ original_name: 1 });
 showSchema.index({ show_type: 1 });
 showSchema.index({ popularity_score: -1 });
 
-export default mongoose.model<ShowType>("Show", showSchema);
+export default mongoose.model<IShow>("Show", showSchema);

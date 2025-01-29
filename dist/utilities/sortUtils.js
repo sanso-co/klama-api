@@ -1,17 +1,7 @@
-import { SortOrder } from "mongoose";
-import { IShow } from "../interfaces/show";
-
-type SortOptions = {
-    [key: string]: SortOrder;
-};
-
-type SortTypeOptions = {
-    original_name?: 1 | -1;
-    name?: 1 | -1;
-    first_air_date?: 1 | -1;
-};
-
-export const getSortOptions = (sort = "date_desc"): SortOptions => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sortShows = exports.getSortOptions = void 0;
+const getSortOptions = (sort = "date_desc") => {
     switch (sort) {
         case "name_asc":
             return { name: 1 };
@@ -25,8 +15,8 @@ export const getSortOptions = (sort = "date_desc"): SortOptions => {
             return { name: 1 };
     }
 };
-
-export const sortShows = (shows: IShow[], sortOptions: SortTypeOptions) => {
+exports.getSortOptions = getSortOptions;
+const sortShows = (shows, sortOptions) => {
     return [...shows].sort((a, b) => {
         if (sortOptions.original_name) {
             return sortOptions.original_name * a.original_name.localeCompare(b.original_name);
@@ -35,11 +25,10 @@ export const sortShows = (shows: IShow[], sortOptions: SortTypeOptions) => {
             return sortOptions.name * a.name.localeCompare(b.name);
         }
         if (sortOptions.first_air_date) {
-            return (
-                sortOptions.first_air_date *
-                (new Date(a.first_air_date).getTime() - new Date(b.first_air_date).getTime())
-            );
+            return (sortOptions.first_air_date *
+                (new Date(a.first_air_date).getTime() - new Date(b.first_air_date).getTime()));
         }
         return 0;
     });
 };
+exports.sortShows = sortShows;

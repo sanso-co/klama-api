@@ -3,6 +3,8 @@ import { PaginationResponseType, RequestQuery } from "../interfaces/api";
 import { getSortOptions, sortShows } from "../utilities/sortUtils";
 import Person from "../models/person";
 import { paginatedResult } from "../utilities/paginateUtils";
+import { IPerson } from "../interfaces/person";
+import { IShow } from "../interfaces/show";
 
 interface PersonParams {
     personId: string;
@@ -13,6 +15,10 @@ interface PersonResponse extends PaginationResponseType {
     name: string;
     original_name?: string;
     img_path?: string;
+}
+
+interface IPersonPopulated {
+    shows: IShow[];
 }
 
 export const getPersonDetails: RequestHandler<
@@ -27,7 +33,7 @@ export const getPersonDetails: RequestHandler<
     try {
         const sortOptions = getSortOptions(sort);
 
-        const person = await Person.findOne({ id: personId }).populate({
+        const person = await Person.findOne({ id: personId }).populate<IPersonPopulated>({
             path: "shows",
             select: "_id id name original_name poster_path genres first_air_date popularity_score",
         });

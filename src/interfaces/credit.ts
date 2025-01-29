@@ -1,5 +1,4 @@
 import mongoose, { Document } from "mongoose";
-import { IShow } from "./show";
 
 export interface ICredit extends Document {
     _id: mongoose.Types.ObjectId;
@@ -7,5 +6,5 @@ export interface ICredit extends Document {
     name: string;
     original_name?: string;
     job?: string;
-    shows: IShow[];
+    shows: mongoose.Types.ObjectId[];
 }

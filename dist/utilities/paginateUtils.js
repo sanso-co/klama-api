@@ -1,19 +1,12 @@
-import { PaginationResponseType } from "../interfaces/api";
-import { IShow } from "../interfaces/show";
-
-export interface PaginationOptions {
-    page?: string | number;
-    limit?: string | number;
-}
-
-export function getPaginationParams(options: PaginationOptions) {
-    const pageNum =
-        typeof options.page === "string" ? parseInt(options.page, 10) : options.page || 1;
-    const limitNum =
-        typeof options.limit === "string" ? parseInt(options.limit, 10) : options.limit || 10;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPaginationParams = getPaginationParams;
+exports.paginatedResult = paginatedResult;
+function getPaginationParams(options) {
+    const pageNum = typeof options.page === "string" ? parseInt(options.page, 10) : options.page || 1;
+    const limitNum = typeof options.limit === "string" ? parseInt(options.limit, 10) : options.limit || 10;
     const startIndex = (pageNum - 1) * limitNum;
     const endIndex = pageNum * limitNum;
-
     return {
         pageNum,
         limitNum,
@@ -21,14 +14,9 @@ export function getPaginationParams(options: PaginationOptions) {
         endIndex,
     };
 }
-
-export function paginatedResult(
-    array: IShow[],
-    options: PaginationOptions
-): PaginationResponseType {
+function paginatedResult(array, options) {
     const { pageNum, limitNum, startIndex, endIndex } = getPaginationParams(options);
     const paginatedItems = array.slice(startIndex, endIndex);
-
     return {
         results: paginatedItems,
         totalDocs: array.length,

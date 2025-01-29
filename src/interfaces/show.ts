@@ -37,6 +37,7 @@ interface OriginalStory {
 }
 
 export interface IShow extends Document {
+    _id: mongoose.Types.ObjectId;
     id: number;
     name: string;
     original_name: string;

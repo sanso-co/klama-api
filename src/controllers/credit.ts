@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import Show from "../models/show";
 import Credit from "../models/credit";
 import { RequestQuery } from "../interfaces/api";
+import { getSortOptions, sortShows } from "../utilities/sortUtils";
+import { paginatedResult } from "../utilities/paginateUtils";
 
 interface CreditParams {
     showId: string;
@@ -45,6 +47,53 @@ export const getCreditForShow: RequestHandler = async (req, res) => {
         res.status(200).json(response);
     } catch (error) {
         res.status(500).json({ error });
+    }
+};
+
+interface CreditDetailParams {
+    creditId: string;
+}
+
+export const getCreditDetails: RequestHandler<CreditDetailParams, {}, {}, RequestQuery> = async (
+    req,
+    res
+) => {
+    const { creditId } = req.params;
+    const { page = 1, limit = 30, sort = "date_desc" } = req.query;
+
+    try {
+        const sortOptions = getSortOptions(sort);
+
+        const credits = await Credit.find({ id: creditId }).populate({
+            path: "shows",
+            select: "id name original_name poster_path first_air_date",
+        });
+
+        if (!credits || credits.length === 0) {
+            res.status(404).json({ message: "Credit not found" });
+            return;
+        }
+
+        const uniqueShows = Array.from(
+            new Set(credits.flatMap((credit) => credit.shows.map((show) => JSON.stringify(show))))
+        ).map((showStr) => JSON.parse(showStr));
+
+        const jobs = credits.map((credit) => credit.job);
+
+        const sortedShows = sortShows(uniqueShows, sortOptions);
+
+        const response = paginatedResult(sortedShows, { page, limit });
+
+        res.status(200).json({
+            id: parseInt(creditId),
+            name: credits[0].name,
+            original_name: credits[0].original_name,
+            jobs: jobs,
+            ...response,
+        });
+    } catch (error) {
+        console.error("Error in getKeywordDetails:", error);
+        res.status(500).json({ message: "An error occurred while fetching keyword details" });
     }
 };
 

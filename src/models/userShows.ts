@@ -26,7 +26,7 @@ const userShows = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        wishlisted: {
+        bookmarked: {
             type: Boolean,
             default: false,
         },
@@ -36,7 +36,7 @@ const userShows = new mongoose.Schema(
 
 userShows.index({ user: 1, liked: 1 }); // Fast query for user's liked shows
 userShows.index({ user: 1, watched: 1 }); // Fast query for user's watched shows
-userShows.index({ user: 1, wishlisted: 1 }); // Fast query for user's watchlist
+userShows.index({ user: 1, bookmarked: 1 }); // Fast query for user's watchlist
 userShows.index({ show: 1, liked: 1 }); // Fast query for show's likes count
 
 export default mongoose.model<IUserShows>("UserShows", userShows);

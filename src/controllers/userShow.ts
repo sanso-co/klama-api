@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import Show from "../models/show";
 import UserShows from "../models/userShows";
 import { ShowFindType } from "../interfaces/show";
-import { SortOrder, Types } from "mongoose";
+import mongoose, { SortOrder, Types } from "mongoose";
 import { paginatedResult } from "../utilities/paginateUtils";
 
 export const getShowStatus: RequestHandler = async (req: any, res) => {
@@ -37,7 +37,7 @@ export const getShowStatus: RequestHandler = async (req: any, res) => {
                 liked: false,
                 disliked: false,
                 watched: false,
-                wishlisted: false,
+                bookmarked: false,
             });
             return;
         }
@@ -47,7 +47,7 @@ export const getShowStatus: RequestHandler = async (req: any, res) => {
             liked: userShow.liked,
             disliked: userShow.disliked,
             watched: userShow.watched,
-            wishlisted: userShow.wishlisted,
+            bookmarked: userShow.bookmarked,
         });
     } catch (error) {
         res.status(500).json(error);
@@ -59,12 +59,12 @@ interface IUserShowFind {
     liked?: boolean;
     disliked?: boolean;
     watched?: boolean;
-    wishlisted?: boolean;
+    bookmarked?: boolean;
 }
 
 export const getShowsByCategory: RequestHandler = async (req: any, res) => {
     try {
-        const { category } = req.params; // 'liked', 'disliked', 'watched', or 'wishlisted'
+        const { category } = req.params; // 'liked', 'disliked', 'watched', or 'bookmarked'
         const { page = "1", limit = "30", sort = "name_asc" } = req.query;
         const userId = req.user?._id;
 
@@ -75,10 +75,10 @@ export const getShowsByCategory: RequestHandler = async (req: any, res) => {
             return;
         }
 
-        const validCategories = ["liked", "disliked", "watched", "watchlist"];
+        const validCategories = ["liked", "disliked", "watched", "bookmarked"];
         if (!validCategories.includes(category)) {
             res.status(400).json({
-                message: "Invalid category. Must be one of: liked, disliked, watched, watchlist",
+                message: "Invalid category. Must be one of: liked, disliked, watched, bookmarked",
             });
             return;
         }
@@ -94,8 +94,8 @@ export const getShowsByCategory: RequestHandler = async (req: any, res) => {
             case "watched":
                 query.watched = true;
                 break;
-            case "watchlist":
-                query.wishlisted = true;
+            case "bookmarked":
+                query.bookmarked = true;
                 break;
         }
 
@@ -122,7 +122,69 @@ export const getShowsByCategory: RequestHandler = async (req: any, res) => {
     }
 };
 
-export const markWatched: RequestHandler = async (req: any, res) => {
+export const getUserShowCounts: RequestHandler = async (req: any, res) => {
+    try {
+        const userId = req.user?._id;
+
+        if (!userId) {
+            res.status(401).json({
+                message: "User not authenticated",
+            });
+            return;
+        }
+
+        const likedCount = await UserShows.countDocuments({ user: userId, liked: true });
+        const dislikedCount = await UserShows.countDocuments({ user: userId, disliked: true });
+        const watchedCount = await UserShows.countDocuments({ user: userId, watched: true });
+        const bookmarkedCount = await UserShows.countDocuments({ user: userId, bookmarked: true });
+
+        // Get last 4 liked shows
+        const likedShows = await UserShows.find({ user: userId, liked: true })
+            .populate({
+                path: "show",
+                model: "Show",
+                select: "_id id name original_name poster_path first_air_date popularity_score",
+            })
+            .select("-_id show")
+            .sort({ createdAt: -1 })
+            .limit(4)
+            .lean()
+            .then((shows) => shows.map((item) => item.show));
+
+        // Get last 4 bookmarked shows
+        const bookmarkedShows = await UserShows.find({ user: userId, bookmarked: true })
+            .populate({
+                path: "show",
+                model: "Show",
+                select: "_id id name original_name poster_path first_air_date popularity_score",
+            })
+            .select("-_id show")
+            .sort({ createdAt: -1 })
+            .limit(4)
+            .lean()
+            .then((shows) => shows.map((item) => item.show));
+
+        const response = {
+            liked: {
+                count: likedCount,
+                shows: likedShows,
+            },
+            disliked: dislikedCount,
+            watched: watchedCount,
+            bookmarked: {
+                count: bookmarkedCount,
+                shows: bookmarkedShows,
+            },
+        };
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.error("Error in getUserShowCounts:", error);
+        res.status(500).json(error);
+    }
+};
+
+export const toggleWatch: RequestHandler = async (req: any, res) => {
     try {
         const { showId } = req.params;
         const userId = req.user?._id;
@@ -160,8 +222,7 @@ export const markWatched: RequestHandler = async (req: any, res) => {
         }
 
         res.status(200).json({
-            showId,
-            watched: true,
+            userShow,
         });
     } catch (error) {
         res.status(500).json(error);
@@ -270,7 +331,7 @@ export const toggleDislike: RequestHandler = async (req: any, res) => {
     }
 };
 
-export const toggleWishlist: RequestHandler = async (req: any, res) => {
+export const toggleBookmark: RequestHandler = async (req: any, res) => {
     try {
         const { showId } = req.params;
         const userId = req.user?._id;
@@ -297,17 +358,17 @@ export const toggleWishlist: RequestHandler = async (req: any, res) => {
         });
 
         if (userShow) {
-            if (userShow.wishlisted) {
-                userShow.wishlisted = false;
+            if (userShow.bookmarked) {
+                userShow.bookmarked = false;
             } else {
-                userShow.wishlisted = true;
+                userShow.bookmarked = true;
             }
             await userShow.save();
         } else {
             userShow = await UserShows.create({
                 user: userId,
                 show: thisShow._id,
-                wishlisted: true,
+                bookmarked: true,
             });
         }
 

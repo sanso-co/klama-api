@@ -16,9 +16,9 @@ interface RegionalPosterPaths {
     KR: PosterPath;
 }
 
-interface Trailer {
-    key?: string;
-    site?: string;
+export interface ITrailer {
+    key: string;
+    site: string;
 }
 
 interface Author {
@@ -47,7 +47,7 @@ export interface IShow extends Document {
     season_number: number;
     homepage?: string;
     poster_path: RegionalPosterPaths;
-    trailer: Trailer[];
+    trailer: ITrailer[];
     original_story: OriginalStory;
     related_seasons: RelatedSeason[];
     genres: mongoose.Types.ObjectId[] | IGenre[];

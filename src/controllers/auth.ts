@@ -20,25 +20,23 @@ export const signup: RequestHandler = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        const [existingEmail, existingUsername] = await Promise.all([
-            User.findOne({ email }),
+        const [existingUsername, existingEmail] = await Promise.all([
             User.findOne({ username }),
+            User.findOne({ email }),
         ]);
 
-        let errorMessage = "";
-
         if (existingUsername) {
-            errorMessage = "Username is already taken";
+            res.status(400).json({
+                status: "error",
+                message: "Username is already taken",
+            });
+            return;
         }
 
         if (existingEmail) {
-            errorMessage = "Email is already in use";
-        }
-
-        if (errorMessage) {
             res.status(400).json({
                 status: "error",
-                message: errorMessage,
+                message: "Email is already in use",
             });
             return;
         }
@@ -55,13 +53,20 @@ export const signup: RequestHandler = async (req, res) => {
             isProfileComplete: true,
         });
 
-        const token = generateToken(newUser);
+        const accessToken = generateToken(newUser, "1d");
+        const refreshToken = generateToken(newUser, "30d");
 
-        const { password: _, ...others } = newUser.toObject();
+        newUser.refreshToken = refreshToken;
+        await newUser.save();
 
-        res.status(200).json({ ...others, token });
+        const { password: _, refreshToken: __, ...others } = newUser.toObject();
+
+        res.status(200).json({
+            ...others,
+            accessToken,
+            refreshToken,
+        });
     } catch (error: unknown) {
-        console.log(error);
         res.status(500).json({
             status: "error",
             message: error instanceof Error ? error.message : "An error occurred during signup",
@@ -92,14 +97,48 @@ export const login: RequestHandler = async (req, res) => {
             return;
         }
 
-        const token = generateToken(user);
-        const { password, ...others } = user.toObject();
-        res.status(200).json({ ...others, token });
+        const accessToken = generateToken(user, "1d");
+        const refreshToken = generateToken(user, "30d");
+
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        const { password, refreshToken: userRefreshToken, ...others } = user.toObject();
+
+        res.status(200).json({
+            ...others,
+            accessToken,
+            refreshToken,
+        });
     } catch (error: unknown) {
         res.status(500).json({
             status: "error",
             message: error instanceof Error ? error.message : "An error occurred during login",
         });
+    }
+};
+
+export const refresh: RequestHandler = async (req: any, res) => {
+    try {
+        const user = await User.findById(req.user?._id);
+
+        if (!user) {
+            res.status(401).json({ message: "User not found" });
+            return;
+        }
+
+        const newAccessToken = generateToken(user, "1d");
+        const newRefreshToken = generateToken(user, "30d");
+
+        user.refreshToken = newRefreshToken;
+        await user.save();
+
+        res.json({
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+        });
+    } catch {
+        res.status(401).json({ message: "Invalid refresh token" });
     }
 };
 
@@ -131,26 +170,27 @@ export const googleAuth: RequestHandler = async (req, res) => {
 
         if (!user.isProfileComplete) {
             res.status(202).json({
-                user: {
-                    _id: user._id,
-                    email: user.email,
-                    avatar: user.avatar,
-                },
+                _id: user._id,
+                email: user.email,
+                avatar: user.avatar,
                 requiresUsername: true,
                 tempToken: generateToken(user, "1h"), // Short-lived token for completing profile
             });
             return;
         }
 
-        const authToken = generateToken(user);
+        const accessToken = generateToken(user, "1d");
+        const refreshToken = generateToken(user, "30d");
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        const userObject = user.toObject();
+        const { password, refreshToken: userRefreshToken, ...others } = userObject;
+
         res.status(200).json({
-            user: {
-                _id: user._id,
-                email: user.email,
-                avatar: user.avatar,
-                username: user.username,
-            },
-            token: authToken,
+            ...others,
+            accessToken,
+            refreshToken,
         });
     } catch (error) {
         if (error instanceof Error) {

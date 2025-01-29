@@ -6,5 +6,5 @@ export interface IUserShows extends Document {
     watched: boolean;
     liked: boolean;
     disliked: boolean;
-    wishlisted: boolean;
+    bookmarked: boolean;
 }

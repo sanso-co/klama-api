@@ -25,3 +25,8 @@ export interface PaginationResponseType {
     prevPage: number | null;
     nextPage: number | null;
 }
+
+export interface CollectionResponseType extends PaginationResponseType {
+    name: string;
+    description: string;
+}

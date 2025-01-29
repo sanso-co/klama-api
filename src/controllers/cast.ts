@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import Cast from "../models/cast";
 import Show from "../models/show";
 import Person from "../models/person";
+import { IPerson } from "../interfaces/person";
 
 export const getCastsForShow: RequestHandler = async (req, res) => {
     const { showId } = req.params;
@@ -20,8 +21,10 @@ export const getCastsForShow: RequestHandler = async (req, res) => {
         }
 
         const result = castDoc.casts.map((cast) => ({
-            id: cast.person.id,
+            id: (cast.person as IPerson).id,
             role: cast.role,
+            name: (cast.person as IPerson).name,
+            profile_path: (cast.person as IPerson).profile_path,
             order: cast.order,
         }));
 

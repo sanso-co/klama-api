@@ -3,7 +3,8 @@ import { RequestHandler } from "express";
 import { paginatedResult } from "../utilities/paginateUtils";
 
 import PermanentCollection from "../models/permanentCollection";
-import { PaginationResponseType, RequestQuery } from "../interfaces/api";
+import { CollectionResponseType, PaginationResponseType, RequestQuery } from "../interfaces/api";
+import { getSortOptions } from "../utilities/sortUtils";
 
 export const getAllPermanentCollection: RequestHandler = async (req, res) => {
     try {
@@ -21,17 +22,20 @@ interface CollectionParams {
 // get permanent collection details
 export const getPermanentCollectoinDetails: RequestHandler<
     CollectionParams,
-    PaginationResponseType | { message: string },
+    CollectionResponseType | { message: string },
     {},
     RequestQuery
 > = async (req, res) => {
     const { id: _id } = req.params;
-    const { page = "1", limit = "10" } = req.query;
+    const { page = "1", limit = "10", sort = "name_asc" } = req.query;
 
     try {
+        const sortOptions = getSortOptions(sort);
+
         const collection = await PermanentCollection.findById(_id).populate({
             path: "shows",
             select: "id name original_name poster_path first_air_date popularity_score",
+            options: { sort: sortOptions },
         });
 
         if (!collection) {
@@ -40,7 +44,11 @@ export const getPermanentCollectoinDetails: RequestHandler<
         }
 
         const response = paginatedResult(collection.shows, { page, limit });
-        res.status(200).json(response);
+        res.status(200).json({
+            name: collection.name,
+            description: collection.description || "",
+            ...response,
+        });
         return;
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });

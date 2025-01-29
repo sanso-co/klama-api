@@ -3,7 +3,7 @@ import { SortOrder, Types } from "mongoose";
 
 import { DocumentType } from "../interfaces/document";
 import { PaginationResponseType, RequestQuery } from "../interfaces/api";
-import { ShowFindType, IShow, ITMDBShow } from "../interfaces/show";
+import { ShowFindType, IShow, ITMDBShow, ITrailer } from "../interfaces/show";
 
 import Show from "../models/show";
 import Genre from "../models/genre";
@@ -308,7 +308,7 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
 
 export const updateShow: RequestHandler = async (req, res) => {
     const { id } = req.params;
-    const updates: { keywords?: IKeyword[]; genres?: IGenre[] } = req.body;
+    const updates: { keywords?: IKeyword[]; genres?: IGenre[]; trailer?: ITrailer } = req.body;
 
     try {
         let updatedData: Partial<IShow> = {};
@@ -347,11 +347,21 @@ export const updateShow: RequestHandler = async (req, res) => {
             updatedData.keywords = keywordIds;
         }
 
+        if (updates.trailer) {
+            updatedData.trailer = [
+                {
+                    key: updates.trailer.key,
+                    site: updates.trailer.site,
+                },
+            ] as unknown as ITrailer[];
+        }
+
         const updatedShow = await Show.findOneAndUpdate(
             { id: id },
             { $set: updatedData },
             { new: true, runValidators: true }
         );
+
         if (!updatedShow) {
             res.status(404).json({ message: "Show not found" });
             return;

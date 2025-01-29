@@ -8,4 +8,5 @@ export interface UserType extends Document {
     avatar: string | null;
     isProfileComplete: boolean;
     isAdmin: boolean;
+    refreshToken: string | null;
 }

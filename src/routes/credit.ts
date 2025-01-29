@@ -1,6 +1,7 @@
 import express from "express";
 import {
     getCreditForShow,
+    getCreditDetails,
     getAllCredit,
     searchCredit,
     updateCredit,
@@ -19,6 +20,11 @@ router.get("/", getAllCredit);
 // @desc Get Credits that belong to a show
 // @access Public
 router.get("/show/:showId", getCreditForShow);
+
+// @route GET /credit/detail/:id
+// @desc Get Credit that belong to a show
+// @access Public
+router.get("/detail/:creditId", getCreditDetails);
 
 // @route GET /credit/search
 // @desc Search credit

@@ -23,6 +23,7 @@ import showTypeRoutes from "./routes/showType";
 import periodicRoutes from "./routes/periodicCollection";
 import permanentRoutes from "./routes/permanentCollection";
 import recommendationsRoutes from "./routes/recommendations";
+import sitemapRoutes from "./routes/sitemap";
 
 const app = express();
 dotenv.config();
@@ -33,22 +34,23 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
 //use router
-app.use("/auth", authRoutes);
-app.use("/hero", heroRoutes);
-app.use("/show", showRoutes);
-app.use("/genre", genreRoutes);
-app.use("/keyword", keywordRoutes);
-app.use("/tone", toneRoutes);
-app.use("/provider", providerRoutes);
-app.use("/cast", castRoutes);
-app.use("/credit", creditRoutes);
-app.use("/person", personRoutes);
-app.use("/user", userRoutes);
-app.use("/user-show", userShowRoutes);
-app.use("/type", showTypeRoutes);
-app.use("/periodic-collection", periodicRoutes);
-app.use("/permanent-collection", permanentRoutes);
-app.use("/recommendations", recommendationsRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/hero", heroRoutes);
+app.use("/api/show", showRoutes);
+app.use("/api/genre", genreRoutes);
+app.use("/api/keyword", keywordRoutes);
+app.use("/api/tone", toneRoutes);
+app.use("/api/provider", providerRoutes);
+app.use("/api/cast", castRoutes);
+app.use("/api/credit", creditRoutes);
+app.use("/api/person", personRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/user-show", userShowRoutes);
+app.use("/api/type", showTypeRoutes);
+app.use("/api/periodic-collection", periodicRoutes);
+app.use("/api/permanent-collection", permanentRoutes);
+app.use("/api/recommendations", recommendationsRoutes);
+app.use("/", sitemapRoutes);
 
 const dbOptions: mongoose.ConnectOptions = {};
 

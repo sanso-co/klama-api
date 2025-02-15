@@ -12,12 +12,14 @@ import Network from "../models/network";
 import Production from "../models/production";
 import Credit from "../models/credit";
 import ShowType from "../models/showType";
+import Tone from "../models/tone";
 
 import { getSortOptions } from "../utilities/sortUtils";
 import { paginatedResult } from "../utilities/paginateUtils";
 import { genreMapping } from "../helper/genre";
 import { IKeyword } from "../interfaces/keyword";
 import { IGenre } from "../interfaces/genre";
+import { ITone } from "../interfaces/tone";
 
 export const getAllShow: RequestHandler<
     {},
@@ -308,10 +310,15 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
 
 export const updateShow: RequestHandler = async (req, res) => {
     const { id } = req.params;
-    const updates: { keywords?: IKeyword[]; genres?: IGenre[]; trailer?: ITrailer } = req.body;
+    const updates: {
+        keywords?: IKeyword[];
+        genres?: IGenre[];
+        trailer?: ITrailer[];
+        tones?: ITone[];
+    } = req.body;
 
     try {
-        let updatedData: Partial<IShow> = {};
+        let updatedData: Partial<IShow> = { ...updates };
 
         if (updates.genres) {
             const genreIds = await Promise.all(
@@ -345,6 +352,23 @@ export const updateShow: RequestHandler = async (req, res) => {
                 })
             );
             updatedData.keywords = keywordIds;
+        }
+
+        if (updates.tones) {
+            const toneIds = await Promise.all(
+                updates.tones.map(async (item) => {
+                    let tone = await Tone.findOne({ id: item.id });
+                    if (!tone) {
+                        tone = await Tone.create({
+                            name: item.name,
+                            original_name: item.original_name,
+                            id: item.id,
+                        });
+                    }
+                    return tone._id;
+                })
+            );
+            updatedData.tones = toneIds;
         }
 
         if (updates.trailer) {

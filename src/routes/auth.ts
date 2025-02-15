@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, login, googleAuth, completeProfile, refresh } from "../controllers/auth";
+import { signup, login, googleAuth, completeProfile, refresh, validate } from "../controllers/auth";
 import { verifyToken } from "../middleware/checkAuth";
 
 const router = express.Router();
@@ -13,6 +13,11 @@ router.post("/signup", signup);
 // @desc Login
 // @access Public
 router.post("/login", login);
+
+// @route post /validate
+// @desc Validate
+// @access Private
+router.get("/validate", verifyToken, validate);
 
 // @route post /refresh
 // @desc Refresh

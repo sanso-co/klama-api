@@ -84,3 +84,20 @@ export const updateHeroItem: RequestHandler = async (req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 };
+
+// REMOVE HERO ITEM
+export const removeHeroItem: RequestHandler = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedHero = await Hero.findByIdAndDelete(id);
+
+        if (!deletedHero) {
+            res.status(404).json({ message: "Hero item not found." });
+            return;
+        }
+        res.status(200).json({ message: "Hero item removed successfully." });
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};

@@ -174,3 +174,24 @@ export const addShowToCredit: RequestHandler = async (req, res) => {
         res.status(500).json({ error });
     }
 };
+
+export const createCredit: RequestHandler = async (req, res) => {
+    const credit = req.body;
+
+    try {
+        const existingPerson = await Credit.findOne({
+            id: credit.id,
+            job: credit.job,
+        });
+
+        if (existingPerson) {
+            res.status(400).json("Credit already exists");
+            return;
+        }
+        const newCredit = await Credit.create(credit);
+
+        res.status(200).json(newCredit);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};

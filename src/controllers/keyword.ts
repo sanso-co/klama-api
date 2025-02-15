@@ -37,3 +37,20 @@ export const searchKeyword: RequestHandler<{}, {}, {}, RequestQuery> = async (re
         res.status(500).json({ error });
     }
 };
+
+export const createKeyword: RequestHandler = async (req, res) => {
+    const keyword = req.body;
+
+    try {
+        const existingKeyword = await Keyword.findOne({ id: keyword.id });
+
+        if (existingKeyword) {
+            res.status(400).json("Keyword already exists");
+            return;
+        }
+
+        const newKeyword = await Keyword.create(keyword);
+
+        res.status(200).json(newKeyword);
+    } catch (error) {}
+};

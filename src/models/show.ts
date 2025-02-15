@@ -83,6 +83,10 @@ const showSchema = new Schema<IShow>(
         original_overview: {
             type: String,
         },
+        is_custom_content: {
+            type: Boolean,
+            default: false,
+        },
         first_air_date: {
             type: Date,
         },

@@ -118,6 +118,29 @@ export const login: RequestHandler = async (req, res) => {
     }
 };
 
+export const validate: RequestHandler = async (req: any, res) => {
+    try {
+        const user = await User.findById(req.user?._id);
+
+        if (!user) {
+            res.status(401).json({ message: "User not found" });
+            return;
+        }
+
+        const { password, refreshToken, ...safeUserData } = user.toObject();
+
+        res.status(200).json({
+            isValid: true,
+            user: safeUserData,
+        });
+    } catch (error: unknown) {
+        res.status(500).json({
+            status: "error",
+            message: error instanceof Error ? error.message : "An error occurred during validation",
+        });
+    }
+};
+
 export const refresh: RequestHandler = async (req: any, res) => {
     try {
         const user = await User.findById(req.user?._id);

@@ -1,6 +1,7 @@
 import mongoose, { Document, Types } from "mongoose";
 import { IKeyword } from "./keyword";
 import { IGenre } from "./genre";
+import { ITone } from "./tone";
 
 interface RelatedSeason {
     season: number;
@@ -43,6 +44,7 @@ export interface IShow extends Document {
     original_name: string;
     overview?: string;
     original_overview?: string;
+    is_custom_content?: boolean;
     first_air_date: Date;
     number_of_episodes?: number;
     season_number: number;
@@ -56,7 +58,7 @@ export interface IShow extends Document {
     networks: mongoose.Types.ObjectId[];
     production_companies: mongoose.Types.ObjectId[];
     keywords: mongoose.Types.ObjectId[] | IKeyword[];
-    tones: mongoose.Types.ObjectId[];
+    tones: mongoose.Types.ObjectId[] | ITone[];
     show_type: mongoose.Types.ObjectId;
     popularity_score: number;
     likes_count: number;

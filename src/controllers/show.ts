@@ -313,12 +313,13 @@ export const updateShow: RequestHandler = async (req, res) => {
     const updates: {
         keywords?: IKeyword[];
         genres?: IGenre[];
-        trailer?: ITrailer[];
+        trailer?: ITrailer;
         tones?: ITone[];
     } = req.body;
 
     try {
-        let updatedData: Partial<IShow> = { ...updates };
+        const { trailer, ...restUpdates } = updates;
+        let updatedData: Partial<IShow> = { ...restUpdates };
 
         if (updates.genres) {
             const genreIds = await Promise.all(
@@ -371,13 +372,13 @@ export const updateShow: RequestHandler = async (req, res) => {
             updatedData.tones = toneIds;
         }
 
-        if (updates.trailer) {
+        if (trailer) {
             updatedData.trailer = [
                 {
-                    key: updates.trailer.key,
-                    site: updates.trailer.site,
+                    key: trailer.key,
+                    site: trailer.site,
                 },
-            ] as unknown as ITrailer[];
+            ];
         }
 
         const updatedShow = await Show.findOneAndUpdate(

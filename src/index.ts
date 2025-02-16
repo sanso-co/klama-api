@@ -8,6 +8,7 @@ import "./models";
 
 //import routes
 import authRoutes from "./routes/auth";
+import profileRoutes from "./routes/profile";
 import heroRoutes from "./routes/hero";
 import showRoutes from "./routes/show";
 import genreRoutes from "./routes/genre";
@@ -35,6 +36,7 @@ app.use(cors());
 
 //use router
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/show", showRoutes);
 app.use("/api/genre", genreRoutes);

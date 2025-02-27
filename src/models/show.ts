@@ -113,23 +113,9 @@ const showSchema = new Schema<IShow>(
             ref: "ShowType",
             required: true,
         },
-        original_story: {
-            author: {
-                name: {
-                    type: String,
-                },
-                korean_name: {
-                    type: String,
-                },
-            },
-            title: {
-                title: {
-                    type: String,
-                },
-                korean_title: {
-                    type: String,
-                },
-            },
+        original_work: {
+            type: Schema.Types.ObjectId,
+            ref: "OriginalWork",
         },
         popularity_score: {
             type: Number,

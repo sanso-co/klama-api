@@ -17,6 +17,7 @@ const creditSchema = new mongoose.Schema(
         },
         job: {
             type: String,
+            enum: ["Director", "Screenwriter", "Producer", "Original Author"],
         },
         shows: [
             {

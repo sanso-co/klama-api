@@ -31,7 +31,10 @@ export const getCreditForShow: RequestHandler = async (req, res) => {
             return;
         }
 
-        const credits = await Credit.find({ shows: show._id }).sort({ job: 1 });
+        const credits = await Credit.find({
+            shows: show._id,
+            job: { $ne: "Original Author" },
+        }).sort({ job: 1 });
 
         const response = {
             id: showId,

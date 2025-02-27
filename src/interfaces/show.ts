@@ -2,6 +2,7 @@ import mongoose, { Document, Types } from "mongoose";
 import { IKeyword } from "./keyword";
 import { IGenre } from "./genre";
 import { ITone } from "./tone";
+import { IOriginalWork } from "./originalWork";
 
 interface RelatedSeason {
     season: number;
@@ -32,11 +33,6 @@ interface Title {
     korean_title?: string;
 }
 
-interface OriginalStory {
-    author: Author;
-    title: Title;
-}
-
 export interface IShow extends Document {
     _id: mongoose.Types.ObjectId;
     id: number;
@@ -51,7 +47,7 @@ export interface IShow extends Document {
     homepage?: string;
     poster_path: RegionalPosterPaths;
     trailer: ITrailer[];
-    original_story: OriginalStory;
+    original_work: mongoose.Types.ObjectId;
     related_seasons: RelatedSeason[];
     genres: mongoose.Types.ObjectId[] | IGenre[];
     credits: mongoose.Types.ObjectId[];

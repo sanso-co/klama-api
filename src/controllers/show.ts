@@ -104,6 +104,10 @@ export const getShowDetails: RequestHandler = async (req, res) => {
                 model: "Show",
                 select: "_id id name original_name season_number",
             });
+        // .populate({
+        //     path: "original_story.author",
+        //     model: "Credit",
+        // });
 
         if (!details) {
             res.status(404).json({ message: "Show not found" });

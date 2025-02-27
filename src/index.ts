@@ -24,6 +24,7 @@ import showTypeRoutes from "./routes/showType";
 import periodicRoutes from "./routes/periodicCollection";
 import permanentRoutes from "./routes/permanentCollection";
 import recommendationsRoutes from "./routes/recommendations";
+import originalRoutes from "./routes/originalWork";
 import sitemapRoutes from "./routes/sitemap";
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/tone", toneRoutes);
 app.use("/api/provider", providerRoutes);
 app.use("/api/cast", castRoutes);
 app.use("/api/credit", creditRoutes);
+app.use("/api/original", originalRoutes);
 app.use("/api/person", personRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/user-show", userShowRoutes);

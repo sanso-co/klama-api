@@ -77,7 +77,7 @@ export const getAllShow: RequestHandler<
             sort === "date_desc"
                 ? { first_air_date: -1 as SortOrder }
                 : { original_name: 1 as SortOrder };
-
+        console.log(query);
         const shows = await Show.find(query)
             .select("id name original_name poster_path first_air_date popularity_score")
             .sort(sortOption);

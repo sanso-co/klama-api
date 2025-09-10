@@ -1,0 +1,181 @@
+emotion,question,intent
+Feeling Down,I need something comforting.,healing
+Feeling Down,Do you have a comforting drama recommendation?,healing
+Feeling Down,Can you suggest comforting dramas?,healing
+Feeling Down,I'm looking for comforting dramas. Any recommendations?,healing
+Feeling Down,I need comforting series to help me relax. Any ideas?,healing
+Feeling Down,I want something calm and emotional.,calm
+Feeling Down,Can you suggest something calm and emotional?,calm
+Feeling Down,What are some calm and emotional series to watch?,calm
+Feeling Down,I'm looking for something calm and emotional.,calm
+Feeling Down,I want something emotional.,emotional
+Feeling Down,Anything that helps when I feel low?,emotional
+Feeling Down,Can you recommend something to lift my mood?,feel-good
+Feeling Down,I want something that can make me feel better.,feel-good
+Feeling Down,Can you recommend something that can cheer me up?,feel-good
+Feeling Down,Any uplifting shows you recommend?,feel-good
+Feeling Down,I think a good cry might help.,cathartic
+Feeling Down,Can you recommend a drama that’ll really make me cry?,cathartic
+Feeling Down,I feel like I just need to let it all out. Any tearjerkers?,cathartic
+Feeling Down,I want something super emotional that’ll help me release some feelings.,cathartic
+Feeling Down,I’m in the mood for a drama that hits hard emotionally. Got any?,cathartic
+Feeling Down,I want to release some emotions.,cathartic
+Feeling Down,I just want a drama that makes me cry. Got any?,cathartic
+Feeling Down,Can you suggest something that helps when I feel heavy inside?,cathartic
+Feeling Down,I feel a bit stuck. Anything emotional to watch?,cathartic
+Feeling Down,I need something that lets me feel and maybe cry a little.,cathartic
+Feeling Down,I need something to quietly sink into.,slow-burn
+Feeling Down,Any drama that’s quiet and easy to get into?,slow-burn
+Feeling Down,I’m looking for something slow and peaceful to watch.,calming
+Feeling Down,Can you recommend a calm and beautiful series?,calming
+Feeling Down,I want something that feels slow and thoughtful.,introspective
+Tired & Drained,I’m looking for something easy to watch.,light
+Tired & Drained,Any light shows that don’t take much energy to follow?,light
+Tired & Drained,I just want something simple and relaxing to watch.,light
+Tired & Drained,What’s a feel-good drama I can watch without thinking too much?,feel-good
+Tired & Drained,I’m too tired for anything heavy. Got a chill drama to recommend?,light
+Tired & Drained,Any healing stories for when I’m drained?,healing
+Tired & Drained,Can you recommend something that feels comforting to watch?,healing
+Tired & Drained,I need a drama that helps me feel a little better.,healing
+Tired & Drained,What’s a soothing story to help me relax right now?,healing
+Tired & Drained,I’m feeling drained. Any gentle dramas that might help?,healing
+Tired & Drained,Recommend something I don’t have to think about.,light
+Tired & Drained,Got any shows I can just zone out to?,light
+Tired & Drained,I want something fun and easy. Nothing too deep.,light
+Tired & Drained,What’s a chill drama I can just enjoy without thinking?,light
+Tired & Drained,I’m too tired to focus. Anything light and simple?,light
+Tired & Drained,I’m too tired. Just want something light.,light
+Tired & Drained,"I just need an easy, feel-good drama right now.",feel-good
+Tired & Drained,Any lighthearted shows to help me unwind?,light
+Tired & Drained,I’m exhausted. What’s something fun and low-effort to watch?,light
+Tired & Drained,Looking for something relaxing and cheerful to end the day.,cheerful
+Tired & Drained,"I like slow, everyday kind of dramas.",slice of life
+Tired & Drained,I enjoy calm stories about everyday life. Any suggestions?,slice of life
+Tired & Drained,Got any slow-paced dramas that feel real and relatable?,slice of life
+Tired & Drained,"I’m into simple, everyday moments. What should I watch?",slice of life
+Tired & Drained,"I’d love something that slowly pulls me in, nothing too dramatic.",slice of life
+Tired & Drained,I want to unwind with something simple and bright.,light
+Tired & Drained,What’s a light and cheerful drama to help me relax?,cheerful
+Tired & Drained,I just want something happy and easy to watch. Any ideas?,light
+Tired & Drained,"Looking for a simple, feel-good show to lift my mood.",feel-good
+Tired & Drained,Anything bright and positive to unwind with?,feel-good
+Feeling Love,I’m in the mood for a sweet romance.,sweet romance
+Feeling Love,Any feel-good love stories you recommend?,sweet romance
+Feeling Love,I want to watch a cute and heartwarming romance.,sweet romance
+Feeling Love,Looking for something sweet and romantic to enjoy.,sweet romance
+Feeling Love,What’s a nice romance drama to lift my mood?,sweet romance
+Feeling Love,Recommend something with heart-fluttering moments.,heart-fluttering
+Feeling Love,Any dramas with cute romantic moments that make your heart race?,heart-fluttering
+Feeling Love,I’m in the mood for a drama with lots of sweet chemistry.,heart-fluttering
+Feeling Love,What should I watch if I want that butterflies-in-the-stomach feeling?,heart-fluttering
+Feeling Love,"Recommend a love story that’s full of flirty, feel-good moments.",heart-fluttering
+Feeling Love,Love stories really lift my mood these days.,sweet romance
+Feeling Love,I’d love a romantic drama that puts me in a good mood.,sweet romance
+Feeling Love,Any cheerful love stories that can brighten my day?,sweet romance
+Feeling Love,I’m looking for something sweet and uplifting to watch.,sweet romance
+Feeling Love,Got any feel-good romance dramas that boost your mood?,sweet romance
+Feeling Love,"I like slow-burning, gentle relationships.",slow-burn romance
+Feeling Love,Can you suggest a romance that builds slowly and emotionally?,slow-burn romance
+Feeling Love,I love stories where the relationship develops gently over time.,slow-burn romance
+Feeling Love,"Any dramas with soft, slow-growing love stories?",slow-burn romance
+Feeling Love,I’m in the mood for a heartfelt romance that takes its time.,slow-burn romance
+Feeling Love,"I’d love something with soft, sweet emotions.",sweet romance
+Feeling Love,Can you recommend a gentle and heartwarming love story?,sweet romance
+Feeling Love,I’m looking for a sweet romance that feels warm and comforting.,sweet romance
+Feeling Love,Any soft and healing romantic dramas you’d suggest?,sweet romance
+Feeling Love,I’d love to watch something tender and soothing tonight.,sweet romance
+Feeling Love,I want to get lost in a romantic mood.,romance
+Feeling Love,Can you recommend a romance I can completely get lost in?,romance
+Feeling Love,I want something with a dreamy and magical love story.,fantasy romance
+Feeling Love,I’m in the mood for a romance that feels like a fantasy.,fantasy romance
+Feeling Love,Any romantic dramas that totally sweep you away?,romance
+Emotionless,I feel emotionally numb.,introspective
+Emotionless,Can you suggest something that might help me feel something again?,introspective
+Emotionless,I’m looking for a drama that stirs emotions and makes me reflect.,introspective
+Emotionless,Any shows that awaken emotions or touch something deep inside?,introspective
+Emotionless,I need something gentle that helps me reconnect with myself.,introspective
+Emotionless,I want to escape from reality.,immersive
+Emotionless,Can you recommend a drama that completely takes me out of real life?,immersive
+Emotionless,I’m looking for something to escape into. Any suggestions?,immersive
+Emotionless,Any immersive shows that let me forget everything for a while?,immersive
+Emotionless,I just want to disappear into another world for a bit. What should I watch?,immersive
+Emotionless,I need a drama I can just fall into.,immersive
+Emotionless,Can you suggest a drama that pulls you in right away?,immersive
+Emotionless,I want something I can binge without even noticing the time.,immersive
+Emotionless,Any shows that are super engaging and hard to stop watching?,immersive
+Emotionless,I’m in the mood for a drama I can completely lose myself in,immersive
+Emotionless,Any drama that fits a hollow kind of mood?,melancholy
+Emotionless,"Can you recommend something with a quiet, slightly sad vibe?",melancholy
+Emotionless,I’m looking for a drama that feels emotionally distant but beautiful.,melancholy
+Emotionless,"Any shows with a soft, empty atmosphere and strong visuals?",melancholy
+Emotionless,"I want something that matches a quiet, hollow kind of feeling.",melancholy
+Emotionless,I want something that stirs me out of this numbness.,intense
+Emotionless,Can you recommend a drama that really hits hard emotionally?,intense
+Emotionless,I need something powerful enough to shake me out of this fog.,intense
+Emotionless,Any shows that leave a strong emotional impact?,intense
+Emotionless,I’m looking for something intense that wakes up my feelings.,intense
+Emotionless,Looking for a drama that awakens emotions.,intense
+Emotionless,I want a drama that helps me feel something again.,intense
+Emotionless,Can you recommend something that stirs deep emotions?,intense
+Emotionless,Any shows that make you cry in a good way?,cathartic
+Emotionless,I’m looking for a story that helps me release what I’ve been holding in.,cathartic
+Stressed Out,I’m so stressed. Anything to escape reality?,immersive
+Stressed Out,I need something that pulls me into another world.,immersive
+Stressed Out,Can you suggest a show that helps me forget everything?,immersive
+Stressed Out,I want a drama that completely takes my mind off things.,immersive
+Stressed Out,Any immersive stories to escape this stress?,immersive
+Stressed Out,I want something fast-paced to clear my mind.,intense
+Stressed Out,Can you recommend a drama that moves quickly and keeps me hooked?,intense
+Stressed Out,I’m looking for something action-packed or intense to distract me.,intense
+Stressed Out,Any fast-paced series that won’t give me time to overthink?,intense
+Stressed Out,I want a show that grabs my attention right away and doesn’t let go.,intense
+Stressed Out,A good comedy to laugh the stress away sounds perfect.,humorous
+Stressed Out,I need something funny to take the edge off.,humorous
+Stressed Out,Can you suggest a lighthearted show that’ll make me laugh?,humorous
+Stressed Out,"I’m in the mood for a fun, feel-good comedy.",humorous
+Stressed Out,Any dramas that are great for laughing off a stressful day?,humorous
+Stressed Out,Recommend something to distract me from overthinking.,light
+Stressed Out,I just need a fun drama to take my mind off things.,light
+Stressed Out,Any easy-to-watch shows that’ll keep me distracted?,light
+Stressed Out,Can you suggest something light and entertaining?,light
+Stressed Out,I’m looking for a drama that’s fun and not too deep.,light
+Stressed Out,A tense thriller might be just what I need.,intense
+Stressed Out,I want something thrilling to keep me on the edge of my seat.,intense
+Stressed Out,Any intense dramas that’ll totally pull me in?,intense
+Stressed Out,Recommend a suspenseful show with lots of tension.,intense
+Stressed Out,I’m in the mood for a drama that keeps my heart racing.,intense
+Stressed Out,I want to lose myself in another world for a while.,fantasy
+Stressed Out,Can you recommend a fantasy drama I can escape into?,fantasy
+Stressed Out,I just want to get lost in a different world. Any suggestions?,fantasy
+Stressed Out,Looking for something magical and totally absorbing.,fantasy
+Stressed Out,I need a series that feels like a whole new universe.,fantasy
+Need a pick-me-up,I want something light to lift my mood.,feel-good
+Need a pick-me-up,Can you suggest a light drama that’ll cheer me up?,feel-good
+Need a pick-me-up,I need something easy and happy to watch.,feel-good
+Need a pick-me-up,What’s a feel-good series to brighten my day?,feel-good
+Need a pick-me-up,Looking for something fun and light to boost my mood.,feel-good
+Need a pick-me-up,I need a drama that makes me laugh.,humorous
+Need a pick-me-up,Got any funny dramas that can lift my spirits?,humorous
+Need a pick-me-up,I’m in the mood for something hilarious and light.,humorous
+Need a pick-me-up,Can you recommend a drama that’ll make me laugh out loud?,humorous
+Need a pick-me-up,I need something cheerful and funny to boost my mood.,humorous
+Need a pick-me-up,"Positive, feel-good stories are what I need.",feel-good
+Need a pick-me-up,Can you suggest something uplifting and heartwarming?,feel-good
+Need a pick-me-up,I’m looking for a feel-good drama that leaves me smiling.,feel-good
+Need a pick-me-up,Any shows with positive vibes and good energy?,feel-good
+Need a pick-me-up,I just want something sweet and cheerful to watch.,cheerful
+Need a pick-me-up,I want to end the day with something cheerful.,cheerful
+Need a pick-me-up,What’s a cheerful drama I can wind down with tonight?,cheerful
+Need a pick-me-up,Can you recommend something light and heartwarming for the evening?,feel-good
+Need a pick-me-up,I’d love a warm and happy show to end the day on a good note.,feel-good
+Need a pick-me-up,Any feel-good series that’s perfect for relaxing before bed?,feel-good
+Need a pick-me-up,Any drama that gives me a boost when I’m low?,feel-good
+Need a pick-me-up,What’s a good drama to lift my spirits when I’m feeling down?,feel-good
+Need a pick-me-up,I need a show that gives me an energy boost — any suggestions?,cheerful
+Need a pick-me-up,Can you recommend something that helps when I’m feeling low?,feel-good
+Need a pick-me-up,I’m looking for a feel-good series to brighten my mood.,feel-good
+Need a pick-me-up,Looking for something healing and energizing.,healing
+Need a pick-me-up,Can you suggest a drama that feels both healing and uplifting?,healing
+Need a pick-me-up,I want something that restores my energy and soothes my mood.,healing
+Need a pick-me-up,Any shows that are comforting but also give a little boost?,healing
+Need a pick-me-up,I need something that helps me recharge and feel better.,healing

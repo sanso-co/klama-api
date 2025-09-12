@@ -162,7 +162,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
             }
 
             const { intent: topIntent, confidence } = parsed.top_predictions[0];
-
+            console.log(topIntent, confidence);
             const toneId = await getToneIdByName(topIntent);
             if (!toneId) {
                 return sendOnce(200, {

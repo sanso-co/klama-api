@@ -65,11 +65,15 @@ export const getAllShow: RequestHandler<
             query.first_air_date = {};
 
             if (from) {
-                query.first_air_date.$gte = new Date(`${from}-01-01T00:00:00.000Z`);
+                query.first_air_date.$gte = new Date(
+                    `${from}-01-01T00:00:00.000Z`
+                );
             }
 
             if (to) {
-                query.first_air_date.$lte = new Date(`${to}-12-31T23:59:59.999Z`);
+                query.first_air_date.$lte = new Date(
+                    `${to}-12-31T23:59:59.999Z`
+                );
             }
         }
 
@@ -79,7 +83,9 @@ export const getAllShow: RequestHandler<
                 : { original_name: 1 as SortOrder };
         console.log(query);
         const shows = await Show.find(query)
-            .select("id name original_name poster_path first_air_date popularity_score")
+            .select(
+                "id name original_name poster_path first_air_date popularity_score"
+            )
             .sort(sortOption);
 
         const response = paginatedResult(shows, { page, limit });
@@ -139,7 +145,9 @@ export const getShowCategoryList: RequestHandler<
         const sortOptions = getSortOptions(sort);
 
         if (category === "genre") {
-            const genreDocument = (await Genre.findOne({ id })) as DocumentType | null;
+            const genreDocument = (await Genre.findOne({
+                id,
+            })) as DocumentType | null;
             if (genreDocument) {
                 query.genres = genreDocument._id;
             } else {
@@ -149,7 +157,9 @@ export const getShowCategoryList: RequestHandler<
         }
 
         if (category === "keyword") {
-            const keywordDocument = (await Keyword.findOne({ id })) as DocumentType | null;
+            const keywordDocument = (await Keyword.findOne({
+                id,
+            })) as DocumentType | null;
             if (keywordDocument) {
                 query.keywords = { $in: [keywordDocument._id] };
             } else {
@@ -165,7 +175,9 @@ export const getShowCategoryList: RequestHandler<
         }
 
         const shows = await Show.find(query)
-            .select("id name original_name poster_path first_air_date popularity_score")
+            .select(
+                "id name original_name poster_path first_air_date popularity_score"
+            )
             .sort(sortOptions);
 
         const response = paginatedResult(shows, { page, limit });
@@ -176,7 +188,10 @@ export const getShowCategoryList: RequestHandler<
     }
 };
 
-export const searchShow: RequestHandler<{}, {}, {}, RequestQuery> = async (req, res) => {
+export const searchShow: RequestHandler<{}, {}, {}, RequestQuery> = async (
+    req,
+    res
+) => {
     const { query, limit = "10" } = req.query;
 
     if (!query) {
@@ -193,10 +208,16 @@ export const searchShow: RequestHandler<{}, {}, {}, RequestQuery> = async (req, 
         const regexQuery = new RegExp(query, "i");
 
         const searchResults = await Show.find({
-            $or: [{ id: idQuery }, { name: regexQuery }, { original_name: regexQuery }],
+            $or: [
+                { id: idQuery },
+                { name: regexQuery },
+                { original_name: regexQuery },
+            ],
         })
             .limit(parseInt(limit))
-            .select("_id id name original_name poster_path genres first_air_date popularity_score")
+            .select(
+                "_id id name original_name poster_path genres first_air_date popularity_score"
+            )
             .lean();
 
         res.status(200).json(searchResults);
@@ -209,7 +230,10 @@ interface AddBody {
     show: ITMDBShow;
 }
 
-export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => {
+export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (
+    req,
+    res
+) => {
     const { show: tmdbShow } = req.body;
 
     try {
@@ -219,7 +243,7 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
             res.status(400).json("Show already exists");
             return;
         }
-
+        console.log("one");
         const showData: Partial<IShow> = {
             id: tmdbShow.id,
             name: tmdbShow.name,
@@ -230,7 +254,7 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
             number_of_episodes: tmdbShow.number_of_episodes,
             homepage: tmdbShow.homepage,
         };
-
+        console.log("two");
         const genreIds = await Promise.all(
             tmdbShow.genres.map(async (item) => {
                 const mappedGenreId = genreMapping[item.id];
@@ -250,7 +274,7 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
         );
 
         showData.genres = genreIds.filter(Boolean) as Types.ObjectId[];
-
+        console.log("three");
         const networkIds = await Promise.all(
             tmdbShow.networks.map(async (networkItem) => {
                 let network = await Network.findOne({ id: networkItem.id });
@@ -266,10 +290,12 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
         );
 
         showData.networks = networkIds;
-
+        console.log("four");
         const productionIds = await Promise.all(
             tmdbShow.production_companies.map(async (productionItem) => {
-                let production = await Production.findOne({ id: productionItem.id });
+                let production = await Production.findOne({
+                    id: productionItem.id,
+                });
                 if (!production) {
                     production = await Production.create({
                         id: productionItem.id,
@@ -282,7 +308,7 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
         );
 
         showData.production_companies = productionIds;
-
+        console.log("five");
         const creditIds = await Promise.all(
             tmdbShow.created_by.map(async (creditItem) => {
                 let credit = await Credit.findOne({ id: creditItem.id });
@@ -299,13 +325,13 @@ export const addShow: RequestHandler<{}, {}, AddBody, {}> = async (req, res) => 
         );
 
         showData.credits = creditIds;
-
+        console.log("six");
         let showType = await ShowType.findOne({ id: 1 });
         if (showType) {
             showData.show_type = showType._id;
         }
         const newShow = await Show.create(showData);
-
+        console.log("seven");
         res.status(200).json(newShow);
     } catch (error) {
         res.status(500).json({ error });

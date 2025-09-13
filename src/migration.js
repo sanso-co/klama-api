@@ -12,7 +12,7 @@ if (!MONGODB_ADDRESS) {
 
 const dbOptions = {};
 
-async function removeOriginalStoryField() {
+async function removeTonesField() {
     try {
         await mongoose.connect(MONGODB_ADDRESS, dbOptions);
 
@@ -25,18 +25,22 @@ async function removeOriginalStoryField() {
 
         // Remove the original_story field from all shows that have it
         const result = await db.collection("shows").updateMany(
-            { original_story: { $exists: true } }, // Find shows with original_story
-            { $unset: { original_story: "" } } // Remove original_story field
+            { tones: { $exists: true } }, // tones 필드가 있는 document 찾기
+            { $unset: { tones: "" } } // tones 필드 제거
         );
 
-        console.log(`Successfully removed original_story from ${result.modifiedCount} shows.`);
+        console.log(
+            `Successfully removed tones from ${result.modifiedCount} shows.`
+        );
     } catch (error) {
-        console.error("Error removing original_story field:", error);
+        console.error("Error removing tones field:", error);
 
         if (typeof error === "object" && error !== null && "code" in error) {
             const errorCode = error.code;
             if (errorCode === 26) {
-                console.error("Collection not found. Make sure the collection name is correct.");
+                console.error(
+                    "Collection not found. Make sure the collection name is correct."
+                );
             }
         }
     } finally {
@@ -44,4 +48,4 @@ async function removeOriginalStoryField() {
     }
 }
 
-removeOriginalStoryField().catch(console.error);
+removeTonesField().catch(console.error);

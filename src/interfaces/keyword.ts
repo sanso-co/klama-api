@@ -7,3 +7,11 @@ export interface IKeyword extends Document {
     original_name?: string;
     rank: number;
 }
+
+export interface IKeywordLexicon extends Document {
+    tag_id: string;
+    matches: string[];
+    variants?: string[];
+    synonyms?: string[];
+    negatives?: string[];
+}

@@ -3,6 +3,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
+from typing import Dict, List
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
@@ -11,15 +12,22 @@ from sklearn.metrics import classification_report
 
 class DramaIntentClassifier:
     """
-    감정(emotion) + 질문(question) 텍스트를 결합해 intent를 분류하는 분류기.
-    - 희소 클래스(drop/other) 처리
+    질문(question) 텍스트만으로 intent를 분류하는 분류기.
     - TF-IDF(1~2gram) + LogisticRegression
     - models/ 에 model/vectorizer/label_encoder 저장/로드
+    - (중요) emotion 컬럼은 CSV에 존재해도 '학습 입력'에서는 사용하지 않음.
+             서빙 단계에서는 prior(가벼운 재정렬)로만 활용.
     """
 
-    def __init__(self, min_count: int = 2, rare_strategy: str = "drop", other_label: str = "other"):
+    def __init__(
+        self,
+        min_count: int = 2,
+        rare_strategy: str = "drop",
+        other_label: str = "other",
+        max_features: int = 2000,
+    ):
         self.vectorizer = TfidfVectorizer(
-            max_features=1000,
+            max_features=max_features,
             ngram_range=(1, 2),
             stop_words="english",
             lowercase=True,
@@ -31,10 +39,13 @@ class DramaIntentClassifier:
         self.other_label = other_label
         self.data: pd.DataFrame | None = None
 
+    # -----------------------
+    # Data
+    # -----------------------
     def load_data(self, csv_path: str = "data/intent_training_data.csv") -> pd.DataFrame | None:
         """
         CSV 데이터 로드 및 전처리
-        - csv_path: 'data/intent_training_data.csv' 같은 상대경로나 절대경로 모두 허용
+        - 필수 컬럼: ['emotion','question','intent'] (emotion은 학습 입력에 사용하지 않음)
         - 상대경로면 이 파일(src/ml) 기준으로 안전하게 합성
         """
         base_dir = os.path.dirname(__file__)  # src/ml
@@ -52,12 +63,12 @@ class DramaIntentClassifier:
                     f"CSV에 필요한 컬럼이 없습니다: {missing} / 실제 컬럼: {list(df.columns)}"
                 )
 
-            # 결측치 제거 및 문자열 클린업
+            # 결측치 제거 및 문자열 정리
             df = df.dropna(subset=required).copy()
             for col in required:
                 df[col] = df[col].astype(str).str.strip()
 
-            # 완전 공백 행 제거(선택)
+            # 완전 공백 행 제거
             for col in required:
                 df = df[df[col].str.len() > 0]
 
@@ -85,19 +96,23 @@ class DramaIntentClassifier:
             )
 
     def _prepare_text_and_labels(self, fit_label_encoder: bool = True):
-        """emotion + question 결합 텍스트 생성 및 레이블 인코딩"""
+        """
+        (핵심) 질문 텍스트만으로 입력 피처 생성.
+        emotion은 학습 입력에 포함하지 않음.
+        """
         if self.data is None:
             raise ValueError("데이터가 로드되지 않았습니다.")
-        combined = (
-            self.data["emotion"].fillna(
-                "") + " " + self.data["question"].fillna("")
-        ).str.strip()
+        X_text_series = self.data["question"].fillna(
+            "").astype(str).str.strip()
         if fit_label_encoder:
             y = self.label_encoder.fit_transform(self.data["intent"])
         else:
             y = self.label_encoder.transform(self.data["intent"])
-        return combined, y
+        return X_text_series, y
 
+    # -----------------------
+    # Train & Eval
+    # -----------------------
     def train(self, test_size: float = 0.2) -> dict:
         """모델 학습 및 간단 리포트 반환"""
         if self.data is None or len(self.data) == 0:
@@ -106,7 +121,7 @@ class DramaIntentClassifier:
         # 희소 클래스 처리
         self._handle_rare_classes()
 
-        # 텍스트/라벨 준비
+        # 텍스트/라벨 준비 (질문만)
         text, y = self._prepare_text_and_labels(fit_label_encoder=True)
 
         # train/test 분할
@@ -115,7 +130,7 @@ class DramaIntentClassifier:
             text, y, test_size=test_size, random_state=42, stratify=y
         )
 
-        # 벡터화: train fit / test transform (데이터 유출 방지)
+        # 벡터화: train fit / test transform
         X_tr = self.vectorizer.fit_transform(X_tr_text)
         X_te = self.vectorizer.transform(X_te_text)
 
@@ -129,13 +144,16 @@ class DramaIntentClassifier:
         report = classification_report(
             y_te,
             y_pred,
-            labels=np.arange(len(self.label_encoder.classes_)),  # 🔹 클래스 개수 명시
+            labels=np.arange(len(self.label_encoder.classes_)),
             target_names=self.label_encoder.classes_,
             zero_division=0,
         )
 
         return {"train_acc": train_acc, "test_acc": test_acc, "report": report}
 
+    # -----------------------
+    # Persistence
+    # -----------------------
     def save(self, model_dir: str = "models") -> None:
         """학습된 모델/전처리기 저장"""
         os.makedirs(model_dir, exist_ok=True)
@@ -153,25 +171,89 @@ class DramaIntentClassifier:
             os.path.join(model_dir, "label_encoder.pkl"))
         return True
 
-    def predict_topk(self, question: str, feeling: str = "", top_k: int = 2) -> dict:
-        """새 인풋에 대해 Top-K intent와 confidence 반환"""
-        combined = f"{feeling} {question}".strip()
-        vec = self.vectorizer.transform([combined])
-        proba = self.model.predict_proba(vec)[0]
+    # -----------------------
+    # Inference
+    # -----------------------
+    def _predict_proba_from_text(self, question: str) -> np.ndarray:
+        """질문 텍스트만으로 클래스 확률 벡터 반환"""
+        q = (question or "").strip()
+        vec = self.vectorizer.transform([q])
+        return self.model.predict_proba(vec)[0]
+
+    def predict_topk(self, question: str, top_k: int = 2) -> dict:
+        """
+        (기본) 텍스트만 기반 Top-K intent와 confidence 반환
+        """
+        proba = self._predict_proba_from_text(question)
         idxs = np.argsort(proba)[::-1][:top_k]
         results = [
             {"intent": self.label_encoder.classes_[
                 i], "confidence": float(proba[i])}
             for i in idxs
         ]
+        return {"input": question.strip(), "top_predictions": results}
+
+    def predict_topk_with_emotion_prior(
+        self,
+        question: str,
+        feeling: str = "",
+        prior_map: Dict[str, Dict[str, float]] | None = None,
+        alpha: float = 0.15,
+        top_k: int = 2,
+    ) -> dict:
+        """
+        (서빙용) 텍스트 확률 + emotion prior를 약하게 결합하여 Top-K 반환
+        - alpha: 0.0~0.4 권장. 0이면 prior 무시.
+        - prior_map: { feeling: { intent: weight, ... }, ... }
+        """
+        proba = self._predict_proba_from_text(question)
+        intents: List[str] = list(self.label_encoder.classes_)
+
+        if not prior_map or not feeling:
+            post = proba
+        else:
+            raw_prior = np.array([prior_map.get(feeling, {}).get(
+                intent, 0.0) for intent in intents], dtype=float)
+            if raw_prior.sum() <= 0:
+                post = proba
+            else:
+                prior = raw_prior / raw_prior.sum()
+                post = (1 - alpha) * proba + alpha * prior
+
+        idxs = np.argsort(post)[::-1][:top_k]
+        results = [
+            {
+                "intent": intents[i],
+                "confidence": float(post[i]),
+                "base_confidence": float(proba[i]),
+            }
+            for i in idxs
+        ]
         return {
-            "input": combined,
+            "input": (feeling + " | " if feeling else "") + question.strip(),
+            "alpha": alpha,
             "top_predictions": results,
         }
 
 
-def predict_drama_intent(question: str, feeling: str = "", model_dir: str = "models", top_k: int = 3) -> dict:
-    """추론용 헬퍼 (API에서 바로 호출 가능)"""
+# ------ 외부에서 바로 쓰는 헬퍼 (텍스트만) ------
+def predict_drama_intent(question: str, model_dir: str = "models", top_k: int = 3) -> dict:
     clf = DramaIntentClassifier()
     clf.load(model_dir=model_dir)
-    return clf.predict_topk(question=question, feeling=feeling, top_k=top_k)
+    return clf.predict_topk(question=question, top_k=top_k)
+
+
+# ------ 외부에서 바로 쓰는 헬퍼 (emotion prior 결합) ------
+def predict_drama_intent_with_prior(
+    question: str,
+    feeling: str = "",
+    model_dir: str = "models",
+    prior_map: Dict[str, Dict[str, float]] | None = None,
+    alpha: float = 0.15,
+    top_k: int = 3,
+) -> dict:
+    clf = DramaIntentClassifier()
+    clf.load(model_dir=model_dir)
+    return clf.predict_topk_with_emotion_prior(
+        question=question, feeling=feeling, prior_map=prior_map, alpha=alpha, top_k=top_k
+    )

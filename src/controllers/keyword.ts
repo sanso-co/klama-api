@@ -54,3 +54,27 @@ export const createKeyword: RequestHandler = async (req, res) => {
         res.status(200).json(newKeyword);
     } catch (error) {}
 };
+
+export const updateKeyword: RequestHandler = async (req, res) => {
+    const { id } = req.params;
+    const updatedData: {
+        id?: string;
+        rank?: string;
+        name?: string;
+        original_name?: string;
+    } = req.body;
+
+    try {
+        const updatedKeyword = await Keyword.findOneAndUpdate(
+            { id: id },
+            { $set: updatedData },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedKeyword) {
+            res.status(404).json({ message: "Keyword not found" });
+            return;
+        }
+        res.status(200).json(updatedKeyword);
+    } catch (error) {}
+};

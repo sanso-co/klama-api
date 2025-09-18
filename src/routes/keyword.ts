@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllKeyword, searchKeyword, createKeyword } from "../controllers/keyword";
+import { getAllKeyword, searchKeyword, createKeyword, updateKeyword } from "../controllers/keyword";
 import { checkAdmin } from "../middleware/checkAuth";
 
 const router = express.Router();
@@ -18,5 +18,10 @@ router.get("/search", searchKeyword);
 // @desc Create a new keyword
 // @access Private
 router.post("/", checkAdmin, createKeyword);
+
+// @route PUT api/keyword/:id
+// @desc Update keyword
+// @access Private
+router.put("/:id", checkAdmin, updateKeyword);
 
 export default router;

@@ -108,7 +108,8 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
 
         const scriptPath = path.resolve("src/ml/predict_intent.py");
         const pyProcess = spawn(
-            "/opt/anaconda3/bin/python",
+            // "/opt/anaconda3/bin/python",
+            "python3",
             [scriptPath, humanFeeling, cleanedQuestion],
             { env: { ...process.env, PYTHONUNBUFFERED: "1" } }
         );

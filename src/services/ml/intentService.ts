@@ -3,7 +3,8 @@
 import path from "path";
 import { spawn } from "child_process";
 
-const PYTHON_BIN = process.env.PYTHON_BIN || "/opt/anaconda3/bin/python";
+// const PYTHON_BIN = process.env.PYTHON_BIN || "/opt/anaconda3/bin/python";
+const PYTHON_BIN = process.env.PYTHON_BIN || "python3";
 const PY_TIMEOUT_MS = Number(process.env.PY_TIMEOUT_MS || 8000);
 
 /** ① Python 스크립트 호출로 intent 예측 수행 */

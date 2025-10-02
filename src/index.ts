@@ -25,6 +25,7 @@ import showTypeRoutes from "./routes/showType";
 import periodicRoutes from "./routes/periodicCollection";
 import permanentRoutes from "./routes/permanentCollection";
 import recommendationsRoutes from "./routes/recommendations";
+import recommendRoutes from "./routes/recommend";
 import originalRoutes from "./routes/originalWork";
 import sitemapRoutes from "./routes/sitemap";
 
@@ -56,6 +57,7 @@ app.use("/api/type", showTypeRoutes);
 app.use("/api/periodic-collection", periodicRoutes);
 app.use("/api/permanent-collection", permanentRoutes);
 app.use("/api/recommendations", recommendationsRoutes);
+app.use("/api/recommend", recommendRoutes);
 app.use("/", sitemapRoutes);
 
 const dbOptions: mongoose.ConnectOptions = {};

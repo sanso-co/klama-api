@@ -22,10 +22,7 @@ export const getAllTone: RequestHandler = async (req, res) => {
 };
 
 // SEARCH TONE
-export const searchTone: RequestHandler<{}, {}, {}, RequestQuery> = async (
-    req,
-    res
-) => {
+export const searchTone: RequestHandler<{}, {}, {}, RequestQuery> = async (req, res) => {
     const { query, limit = "10" } = req.query;
 
     if (!query) {
@@ -162,7 +159,6 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
             }
 
             const { intent: topIntent, confidence } = parsed.top_predictions[0];
-            console.log(topIntent, confidence);
             const toneId = await getToneIdByName(topIntent);
             if (!toneId) {
                 return sendOnce(200, {
@@ -180,10 +176,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
             }
 
             const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
-            const limitNum = Math.min(
-                100,
-                Math.max(1, parseInt(String(limit), 10) || 30)
-            );
+            const limitNum = Math.min(100, Math.max(1, parseInt(String(limit), 10) || 30));
             const sortOption: Record<string, SortOrder> =
                 sort === "date_desc"
                     ? { first_air_date: -1 as SortOrder }
@@ -195,9 +188,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
                 const [total, items] = await Promise.all([
                     Show.countDocuments(query),
                     Show.find(query)
-                        .select(
-                            "id name original_name poster_path first_air_date popularity_score"
-                        )
+                        .select("id name original_name poster_path first_air_date popularity_score")
                         .sort(sortOption)
                         .skip((pageNum - 1) * limitNum)
                         .limit(limitNum)

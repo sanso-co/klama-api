@@ -44,7 +44,8 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
         const sanitizedQuestion = rawQuestion.trim();
 
         if (!normalizedFeeling || !sanitizedQuestion) {
-            return sendOnce(400, { error: "Missing 'feeling' or 'question'" });
+            sendOnce(400, { error: "Missing 'feeling' or 'question'" });
+            return;
         }
 
         // ───────────────────────────────────────────────────────────────────────
@@ -66,10 +67,11 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
             predictedIntentConfidence = inference.confidence || 0;
             pythonEchoedInput = inference.input || "";
         } catch (error: any) {
-            return sendOnce(500, {
+            sendOnce(500, {
                 error: "Intent inference failed",
                 details: String(error?.message || error),
             });
+            return;
         }
 
         // ───────────────────────────────────────────────────────────────────────
@@ -78,7 +80,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
         // ───────────────────────────────────────────────────────────────────────
         const toneObjectId = await getToneObjectIdByNameLoose(predictedIntentName);
         if (!toneObjectId) {
-            return sendOnce(200, {
+            sendOnce(200, {
                 intent: predictedIntentName || null,
                 confidence: predictedIntentConfidence || null,
                 input: pythonEchoedInput,
@@ -90,6 +92,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
                     totalPages: 0,
                 },
             });
+            return;
         }
 
         // ───────────────────────────────────────────────────────────────────────
@@ -126,7 +129,7 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
                     .lean(),
             ]);
 
-            return sendOnce(200, {
+            sendOnce(200, {
                 intent: predictedIntentName,
                 confidence: predictedIntentConfidence,
                 input: pythonEchoedInput,
@@ -138,15 +141,18 @@ export const submitUserEmotion: RequestHandler = async (req, res) => {
                     totalPages: Math.ceil(totalCount / pageLimit),
                 },
             });
+            return;
         } catch (dbError) {
-            return sendOnce(500, { error: "DB query failed", details: String(dbError) });
+            sendOnce(500, { error: "DB query failed", details: String(dbError) });
+            return;
         }
     } catch (unhandledError: any) {
         // ───────────────────────────────────────────────────────────────────────
         // ⑧ 최종 에러 핸들링: 예기치 못한 오류에 대한 안전 응답
         // ───────────────────────────────────────────────────────────────────────
         if (!res.headersSent) {
-            return res.status(500).json({ error: String(unhandledError) });
+            res.status(500).json({ error: String(unhandledError) });
+            return;
         }
     }
 };

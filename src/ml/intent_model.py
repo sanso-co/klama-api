@@ -9,6 +9,29 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 
+DOMAIN_STOPWORDS = [
+    "any", "anything",
+    "bit",
+    "can", "could",
+    "drama",
+    "got",
+    "help",
+    "idea", "ideas", "im", "i'm", "ive", "i’ve",
+    "just",
+    "kdrama",
+    "little", "look", "looking",
+    "me", "my", "mine", "movie",
+    "need",
+    "pick", "picks",  "please",
+    "really", "recommend", "recommends", "recommendation",
+    "series", "should", "show", "so", "something", "suggest", "suggestion", "super",
+    "totally",
+    "u",
+    "very",
+    "want", "wanna", "watch", "will", "would",
+    "you",
+]
+
 
 class DramaIntentClassifier:
     """
@@ -24,16 +47,17 @@ class DramaIntentClassifier:
         min_count: int = 2,
         rare_strategy: str = "drop",
         other_label: str = "other",
-        max_features: int = 2000,
+        max_features: int = 30000,
     ):
         self.vectorizer = TfidfVectorizer(
             max_features=max_features,
-            ngram_range=(1, 2),
-            stop_words="english",
+            ngram_range=(1, 3),
+            stop_words=DOMAIN_STOPWORDS,
             lowercase=True,
         )
         self.label_encoder = LabelEncoder()
-        self.model = LogisticRegression(random_state=42, max_iter=1000, C=1.0)
+        self.model = LogisticRegression(
+            random_state=42, max_iter=1000, C=1.0, class_weight="balanced")
         self.min_count = min_count
         self.rare_strategy = rare_strategy
         self.other_label = other_label
@@ -121,6 +145,9 @@ class DramaIntentClassifier:
         # 희소 클래스 처리
         self._handle_rare_classes()
 
+        print("[DEBUG] intent value counts after rare-class handling:")
+        print(self.data["intent"].value_counts())
+
         # 텍스트/라벨 준비 (질문만)
         text, y = self._prepare_text_and_labels(fit_label_encoder=True)
 
@@ -192,6 +219,12 @@ class DramaIntentClassifier:
             for i in idxs
         ]
         return {"input": question.strip(), "top_predictions": results}
+
+    def debug_tokens(self, text: str):
+        vec = self.vectorizer.transform([(text or "").strip()])
+        feats = self.vectorizer.get_feature_names_out()
+        nz = vec.nonzero()[1]
+        print("[TOKENS]", [feats[i] for i in nz])
 
     def predict_topk_with_emotion_prior(
         self,

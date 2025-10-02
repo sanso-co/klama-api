@@ -10,7 +10,7 @@ EMOTION_PRIOR = {
     "Stressed out":       {"calming": 0.3, "lighthearted": 0.3, "suspenseful": 0.4},
     "Feeling down":       {"healing": 0.5, "heartwarming": 0.3, "uplifting": 0.2},
     "Need a boost":       {"uplifting": 0.5, "feel-good": 0.3, "heart-fluttering": 0.2},
-    "Tired & Drained":    {"calming": 0.5, "heartwarming": 0.3, "slice-of-life": 0.2},
+    "Tired & Drained":    {"calming": 0.3, "heartwarming": 0.3, "slice-of-life": 0.2},
 }
 
 if __name__ == "__main__":

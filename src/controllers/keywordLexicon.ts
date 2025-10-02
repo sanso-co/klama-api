@@ -14,10 +14,9 @@ export const getAllKeywordLexicon: RequestHandler = async (req, res) => {
 
 export const getKeywordLexiconByTagId: RequestHandler = async (req, res) => {
     const { tag_id } = req.params;
-    console.log("one");
     try {
         const keywordLexicon = await KeywordLexicon.findOne({ tag_id });
-        console.log("two", keywordLexicon);
+
         if (!keywordLexicon) {
             res.status(404).json({ message: "Keyword lexicon not found" });
             return;

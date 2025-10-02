@@ -115,7 +115,6 @@ export const getShowsByCategory: RequestHandler = async (req: any, res) => {
             .lean()
             .then((shows) => shows.map((item) => item.show))) as IShow[];
 
-        console.log(categoryShows);
         const response = paginatedResult(categoryShows, { page, limit });
         res.status(200).json(response);
     } catch (error) {
